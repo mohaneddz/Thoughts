@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# thoughts
 
-## Getting Started
+A calm self-reflection web app built with Next.js 16, React 19, TypeScript, Tailwind CSS v4, Framer Motion, TanStack Query, Supabase scaffolding, and Groq AI stubs.
 
-First, run the development server:
+## What is included
+
+- Full App Router foundation for:
+  - `/`, `/tests`, `/tests/[slug]`, `/results/[id]`, `/ai-interpreter`
+  - `/check-in`, `/dashboard`, `/reflection-tools`, `/collections`, `/learn`, `/saved-thoughts`, `/privacy`, `/about`
+- Dual light/dark theme toggle with persisted preference
+- Typed mock-first data for tests, collections, learn articles, tools, check-ins, and sample results
+- Reusable component architecture (cards, filters, question flow, results blocks, AI modes, check-in form, state components)
+- Supabase utilities + SQL schema and RLS policies scaffold
+- Groq AI server utilities + API route stub (`/api/ai/interpret`)
+
+## Setup
+
+1. Install dependencies:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Create environment file:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+cp .env.example .env
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+3. Fill required variables in `.env`:
 
-## Learn More
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `GROQ_API_KEY`
+- `GROQ_MODEL`
+- `NEXT_PUBLIC_APP_URL`
 
-To learn more about Next.js, take a look at the following resources:
+4. (Optional now, required for real persistence) apply schema in Supabase SQL editor:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `supabase/schema.sql`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Run
 
-## Deploy on Vercel
+```bash
+pnpm dev
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Quality checks
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+pnpm lint
+pnpm build
+```
+
+## Notes
+
+- This version is intentionally mock-first for UI and local flows.
+- Supabase/Groq integrations are scaffolded and typed, ready for full auth/data wiring.
+- The app language and disclaimers are explicitly non-clinical and reflection-focused.
