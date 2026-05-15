@@ -1,4 +1,7 @@
-# thoughts
+<h1 style="font-family: Arial, sans-serif; font-size: 36px; color: #6DA8F2; border-bottom: 3px solid #6DA8F2; padding-bottom: 8px;">
+  Thoughts - Reflection and Personal Insight Platform
+</h1>
+
 
 A calm self-reflection web app built with Next.js 16, React 19, TypeScript, Tailwind CSS v4, Framer Motion, TanStack Query, Supabase scaffolding, and Groq AI stubs.
 
