@@ -19,7 +19,7 @@ export const siteConfig = {
     { href: routes.tests, label: 'Tests' },
     { href: routes.checkIn, label: 'Check-in' },
     { href: routes.learn, label: 'Learn' },
-    { href: routes.dashboard, label: 'Profile' },
+    { href: routes.profile, label: 'Profile' },
   ],
 };
 

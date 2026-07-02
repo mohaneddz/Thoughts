@@ -15,5 +15,10 @@ export type TestCategory =
 export type TestDepth = 'quick' | 'medium' | 'deep';
 export type TestTone = 'fun' | 'serious' | 'reflective';
 
-export type AnswerValue = string | number | boolean;
-
+export type AnswerValue =
+  | string
+  | number
+  | boolean
+  | string[]
+  | Record<string, string | number | boolean | null>
+  | null;

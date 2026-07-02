@@ -2,7 +2,7 @@
 create extension if not exists "pgcrypto";
 
 create table if not exists public.profiles (
-  id uuid primary key default gen_random_uuid(),
+  id uuid primary key,
   email text not null unique,
   display_name text,
   created_at timestamptz not null default now()
@@ -93,4 +93,32 @@ for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
 create policy if not exists "saved_thoughts own access" on public.saved_thoughts
 for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
+create or replace function public.handle_new_user()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  insert into public.profiles (id, email, display_name)
+  values (
+    new.id,
+    new.email,
+    coalesce(new.raw_user_meta_data->>'display_name', split_part(new.email, '@', 1))
+  )
+  on conflict (id) do update
+  set
+    email = excluded.email,
+    display_name = coalesce(public.profiles.display_name, excluded.display_name);
+
+  return new;
+end;
+$$;
+
+drop trigger if exists on_auth_user_created on auth.users;
+
+create trigger on_auth_user_created
+after insert on auth.users
+for each row execute function public.handle_new_user();
 
