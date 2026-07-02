@@ -19,7 +19,7 @@ export function Section({
   }
 
   return (
-    <motion.section {...framerMotion.section} className={cn('w-full', className)}>
+    <motion.section initial={false} animate={framerMotion.section.animate} transition={framerMotion.section.transition} className={cn('w-full', className)}>
       {children}
     </motion.section>
   );

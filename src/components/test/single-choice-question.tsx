@@ -3,7 +3,7 @@
 import { cn } from '@/utils/cn';
 import type { ChoiceOption } from '@/types/test';
 
-export function LikertScale({
+export function SingleChoiceQuestion({
   options,
   selected,
   onSelect,
@@ -25,7 +25,10 @@ export function LikertScale({
               : 'border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--color-primary)]/40',
           )}
         >
-          <span>{option.label}</span>
+          <span>
+            <span>{option.label}</span>
+            {option.helperText ? <span className='block text-xs text-[var(--color-muted)]'>{option.helperText}</span> : null}
+          </span>
           <span className='h-4 w-4 rounded-full border border-[var(--color-border)]' />
         </button>
       ))}

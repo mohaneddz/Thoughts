@@ -6,28 +6,29 @@ export function CategoryFilter({
   categories,
   active,
   onSelect,
+  label,
 }: {
   categories: string[];
   active: string;
   onSelect: (value: string) => void;
+  label?: string;
 }) {
   return (
-    <div className='flex flex-wrap gap-2'>
-      {categories.map((category) => (
-        <button
-          key={category}
-          onClick={() => onSelect(category)}
-          className={cn(
-            'rounded-full border px-3 py-1.5 text-xs transition',
-            active === category
-              ? 'border-[var(--color-primary)] bg-[var(--color-primary)] text-white'
-              : 'border-[var(--color-border)] text-[var(--color-muted)]',
-          )}
-        >
-          {category}
-        </button>
-      ))}
+    <div className='flex flex-col gap-1.5'>
+      {label && <span className='text-xs font-medium text-[var(--color-muted)]'>{label}</span>}
+      <select
+        value={active}
+        onChange={(e) => onSelect(e.target.value)}
+        className={cn(
+          'h-11 w-full min-w-[120px] rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-1.5 text-sm transition focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)]',
+        )}
+      >
+        {categories.map((category) => (
+          <option key={category} value={category} className='bg-[var(--color-background)] text-[var(--color-text)]'>
+            {category.charAt(0).toUpperCase() + category.slice(1)}
+          </option>
+        ))}
+      </select>
     </div>
   );
 }
-

@@ -4,13 +4,20 @@ import { AppShell } from '@/components/common/app-shell';
 import { CheckInForm, type CheckInValues } from '@/components/forms/check-in-form';
 import { Card } from '@/components/ui/card';
 import { useState } from 'react';
+import { usePersonalData } from '@/hooks/use-personal-data';
 
 export default function CheckInPage() {
+  const { saveCheckIn } = usePersonalData();
   const [reflection, setReflection] = useState<string>('');
 
   const onSubmit = (values: CheckInValues) => {
     const action = values.stress > 6 ? 'Take a 5-minute breathing break.' : 'Keep the pace and protect your focus block.';
     setReflection(`You reported mood ${values.mood}/10 with stress ${values.stress}/10. Tiny action: ${action}`);
+    saveCheckIn({
+      id: `check-in-${Date.now()}`,
+      ...values,
+      createdAt: new Date().toISOString(),
+    });
   };
 
   return (
