@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="300" viewBox="0 0 1200 300" role="img" aria-label="MDQ">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="hsl(287 72% 42%)"/>
+      <stop offset="60%" stop-color="hsl(349 68% 36%)"/>
+      <stop offset="100%" stop-color="hsl(154 64% 30%)"/>
+    </linearGradient>
+    <radialGradient id="orbA" cx="57%" cy="-7%" r="55%">
+      <stop offset="0%" stop-color="hsla(307 95% 78% / 0.48)"/>
+      <stop offset="100%" stop-color="hsla(307 95% 78% / 0)"/>
+    </radialGradient>
+    <radialGradient id="orbB" cx="-63%" cy="-50%" r="50%">
+      <stop offset="0%" stop-color="hsla(24 92% 74% / 0.42)"/>
+      <stop offset="100%" stop-color="hsla(24 92% 74% / 0)"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1200" height="300" fill="url(#bg)"/>
+  <rect width="1200" height="300" fill="url(#orbA)"/>
+  <rect width="1200" height="300" fill="url(#orbB)"/>
+
+  <g opacity="0.22" stroke="white" fill="none">
+    <path d="M 0 147 C 220 -33, 520 309, 1200 47" stroke-width="2"/>
+    <path d="M 0 227 C 300 23, 700 365, 1200 143" stroke-width="1.5"/>
+  </g>
+</svg>
