@@ -9,7 +9,7 @@ export default async function SingleTestPage({
   const { slug } = await params;
 
   return (
-    <AppShell>
+    <AppShell backgroundMode='none'>
       <TestRunnerPage slug={slug} />
     </AppShell>
   );

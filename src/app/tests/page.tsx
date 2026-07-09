@@ -3,7 +3,7 @@ import { TestsLibraryPage } from '@/components/pages/tests-library-page';
 
 export default function TestsPage() {
   return (
-    <AppShell>
+    <AppShell className='max-w-[92rem]'>
       <TestsLibraryPage />
     </AppShell>
   );
