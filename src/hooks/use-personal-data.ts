@@ -1,11 +1,12 @@
 'use client';
 
-import { useMemo, useSyncExternalStore } from 'react';
+import { useCallback, useMemo, useSyncExternalStore } from 'react';
 import type { CheckInEntry, TestResultSummary } from '@/types/result';
 import type { AnswerValue } from '@/types/common';
 import type { SavedThought } from '@/types/user';
 import {
   type PersonalDataSnapshot,
+  STORAGE_KEY,
   type StoredTestDraft,
   readPersonalData,
   subscribeToPersonalData,
@@ -28,7 +29,7 @@ export function usePersonalData() {
         return '';
       }
 
-      return window.localStorage.getItem('thoughts.personal-data.v1') ?? '';
+      return window.localStorage.getItem(STORAGE_KEY) ?? '';
     },
     () => '',
   );
@@ -49,33 +50,33 @@ export function usePersonalData() {
     };
   }, [rawSnapshot]);
 
-  const updateSnapshot = (updater: (current: PersonalDataSnapshot) => PersonalDataSnapshot) => {
-    const next = updater(snapshot);
+  const updateSnapshot = useCallback((updater: (current: PersonalDataSnapshot) => PersonalDataSnapshot) => {
+    const next = updater(readPersonalData());
     writePersonalData(next);
-  };
+  }, []);
 
-  const saveCheckIn = (entry: CheckInEntry) => {
+  const saveCheckIn = useCallback((entry: CheckInEntry) => {
     updateSnapshot((current) => ({
       ...current,
       checkIns: sortByDateDesc([entry, ...current.checkIns.filter((item) => item.id !== entry.id)]),
     }));
-  };
+  }, [updateSnapshot]);
 
-  const saveResult = (result: TestResultSummary) => {
+  const saveResult = useCallback((result: TestResultSummary) => {
     updateSnapshot((current) => ({
       ...current,
       results: sortByDateDesc([result, ...current.results.filter((item) => item.id !== result.id)]),
     }));
-  };
+  }, [updateSnapshot]);
 
-  const saveThought = (thought: SavedThought) => {
+  const saveThought = useCallback((thought: SavedThought) => {
     updateSnapshot((current) => ({
       ...current,
       savedThoughts: sortByDateDesc([thought, ...current.savedThoughts.filter((item) => item.id !== thought.id)]),
     }));
-  };
+  }, [updateSnapshot]);
 
-  const saveDraft = (draft: { slug: string; answers: Record<string, AnswerValue>; index: number }) => {
+  const saveDraft = useCallback((draft: { slug: string; answers: Record<string, AnswerValue>; index: number; mode?: 'full' | 'guided' }) => {
     const nextDraft: StoredTestDraft = {
       ...draft,
       updatedAt: new Date().toISOString(),
@@ -85,14 +86,14 @@ export function usePersonalData() {
       ...current,
       drafts: sortByDateDesc([nextDraft, ...current.drafts.filter((item) => item.slug !== draft.slug)]),
     }));
-  };
+  }, [updateSnapshot]);
 
-  const clearDraft = (slug: string) => {
+  const clearDraft = useCallback((slug: string) => {
     updateSnapshot((current) => ({
       ...current,
       drafts: current.drafts.filter((item) => item.slug !== slug),
     }));
-  };
+  }, [updateSnapshot]);
 
   return {
     ...snapshot,

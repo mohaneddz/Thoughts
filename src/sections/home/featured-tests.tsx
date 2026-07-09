@@ -1,8 +1,9 @@
 import { TestCard } from '@/components/test/test-card';
 import { testsData } from '@/data/tests';
+import { buildTestCatalog } from '@/utils/tests/catalog';
 
 export function FeaturedTests() {
-  const featured = testsData.filter((test) =>
+  const featured = buildTestCatalog(testsData).filter((test) =>
     ['emotional-awareness-test', 'values-clarity-test', 'overthinking-test', 'social-battery-test'].includes(test.slug),
   );
 

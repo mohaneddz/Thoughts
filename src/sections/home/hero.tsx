@@ -3,7 +3,6 @@ import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import Link from 'next/link';
 import { routes } from '@/config/routes';
-import { DisclaimerBox } from '@/components/common/disclaimer-box';
 
 export function HomeHero() {
   return (
@@ -18,7 +17,6 @@ export function HomeHero() {
         <p className='max-w-xl text-base leading-7 text-[var(--color-muted)]'>
           Move from scattered self-analysis to one clear flow: take a reflection, understand the result, save what matters, and come back to the patterns that keep repeating.
         </p>
-        <DisclaimerBox compact />
         <div className='flex flex-wrap gap-2'>
           <Link href={routes.tests}><Button size='lg'>Start with a reflection</Button></Link>
           <Link href={routes.checkIn}><Button size='lg' variant='secondary'>Quick check-in</Button></Link>
