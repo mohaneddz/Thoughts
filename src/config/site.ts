@@ -1,11 +1,11 @@
 import { routes } from '@/config/routes';
 
 export const siteConfig = {
-  name: 'thoughts',
-  title: 'thoughts | Self-reflection tools',
+  name: 'Happy Healhty Human',
+  title: 'Happy Healhty Human | Self-reflection tools',
   description:
     'Self-reflection tools, not diagnosis. Understand patterns and grow intentionally.',
-  tagline: 'A person who thinks all the time has nothing to think about except thoughts.',
+  tagline: 'Reflect with clarity, build healthier patterns, and grow as a happier human.',
   disclaimer:
     'This is for self-reflection only. It is not a diagnosis or medical advice.',
   navLinks: [

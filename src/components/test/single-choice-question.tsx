@@ -19,7 +19,7 @@ export function SingleChoiceQuestion({
           key={option.value}
           onClick={() => onSelect(option.value)}
           className={cn(
-            'flex w-full items-center justify-between rounded-xl border px-3 py-3 text-left text-sm transition',
+            'click flex w-full items-center justify-between rounded-xl border px-3 py-3 text-left text-sm transition',
             selected === option.value
               ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/10'
               : 'border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--color-primary)]/40',

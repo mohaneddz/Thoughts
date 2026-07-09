@@ -54,6 +54,11 @@ function makeFrequencyQuestions(prefix: string, prompts: string[]): TestQuestion
 
 function makePendingLicensedTest(name: string): TestDefinition {
   const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+  let variantGroup: string | undefined;
+  if (name.startsWith('MMPI')) variantGroup = 'mmpi';
+  else if (name.startsWith('NEO-PI')) variantGroup = 'neo-pi';
+  else if (name.startsWith('BDI')) variantGroup = 'bdi';
+
   return {
     id: `pending-${slug}`,
     slug,
@@ -68,6 +73,7 @@ function makePendingLicensedTest(name: string): TestDefinition {
     tags: ['licensed', 'pending'],
     sourceUrl: 'https://www.ipip.ori.org/',
     licenseNote: 'Licensed instrument. Question payload intentionally omitted until verified content import.',
+    variantGroup,
     scoring: { model: 'none' },
     questions: [],
   };
@@ -834,8 +840,10 @@ export const testsData: TestDefinition[] = [
     tone: 'serious',
     status: 'active',
     riskLevel: 'high',
-    tags: ['open', 'clinical-screener', 'depression'],
+    tags: ['open', 'clinical-screener', 'depression', 'variant-default'],
     sourceUrl: 'https://www.phqscreeners.com/select-screener',
+    variantGroup: 'phq',
+    variantKey: '9',
     scoring: {
       model: 'sum-with-severity',
       minScore: 0,
@@ -863,6 +871,8 @@ export const testsData: TestDefinition[] = [
     riskLevel: 'medium',
     tags: ['open', 'clinical-screener', 'depression'],
     sourceUrl: 'https://www.phqscreeners.com/images/sites/g/files/g10016261/f/201412/instructions.pdf',
+    variantGroup: 'phq',
+    variantKey: '8',
     scoring: {
       model: 'sum-with-severity',
       minScore: 0,
@@ -890,6 +900,8 @@ export const testsData: TestDefinition[] = [
     riskLevel: 'medium',
     tags: ['open', 'clinical-screener', 'depression'],
     sourceUrl: 'https://www.phqscreeners.com/images/sites/g/files/g10016261/f/201412/instructions.pdf',
+    variantGroup: 'phq',
+    variantKey: '2',
     scoring: {
       model: 'sum-with-severity',
       minScore: 0,
@@ -912,8 +924,10 @@ export const testsData: TestDefinition[] = [
     tone: 'serious',
     status: 'active',
     riskLevel: 'medium',
-    tags: ['open', 'clinical-screener', 'anxiety'],
+    tags: ['open', 'clinical-screener', 'anxiety', 'variant-default'],
     sourceUrl: 'https://www.phqscreeners.com/select-screener',
+    variantGroup: 'gad',
+    variantKey: '7',
     scoring: {
       model: 'sum-with-severity',
       minScore: 0,
@@ -940,6 +954,8 @@ export const testsData: TestDefinition[] = [
     riskLevel: 'medium',
     tags: ['open', 'clinical-screener', 'anxiety'],
     sourceUrl: 'https://www.phqscreeners.com/images/sites/g/files/g10016261/f/201412/instructions.pdf',
+    variantGroup: 'gad',
+    variantKey: '2',
     scoring: {
       model: 'sum-with-severity',
       minScore: 0,
@@ -962,8 +978,10 @@ export const testsData: TestDefinition[] = [
     tone: 'serious',
     status: 'active',
     riskLevel: 'medium',
-    tags: ['open', 'clinical-screener', 'stress', 'anxiety', 'depression'],
+    tags: ['open', 'clinical-screener', 'stress', 'anxiety', 'depression', 'variant-default'],
     sourceUrl: 'https://www2.psy.unsw.edu.au/dass/down.htm',
+    variantGroup: 'dass',
+    variantKey: '21',
     scoring: {
       model: 'domain-sum',
       minScore: 0,
@@ -989,6 +1007,8 @@ export const testsData: TestDefinition[] = [
     riskLevel: 'medium',
     tags: ['open', 'clinical-screener', 'stress', 'anxiety', 'depression'],
     sourceUrl: 'https://www2.psy.unsw.edu.au/dass/down.htm',
+    variantGroup: 'dass',
+    variantKey: '42',
     scoring: {
       model: 'domain-sum',
       minScore: 0,
@@ -1097,8 +1117,10 @@ export const testsData: TestDefinition[] = [
     tone: 'serious',
     status: 'active',
     riskLevel: 'medium',
-    tags: ['open', 'substance-use', 'who'],
+    tags: ['open', 'substance-use', 'who', 'variant-default'],
     sourceUrl: 'https://auditscreen.org/check-your-drinking',
+    variantGroup: 'audit',
+    variantKey: '10',
     scoring: {
       model: 'sum-with-severity',
       minScore: 0,
@@ -1192,6 +1214,8 @@ export const testsData: TestDefinition[] = [
     riskLevel: 'medium',
     tags: ['open', 'substance-use', 'who'],
     sourceUrl: 'https://auditscreen.org/about/audit-derivatives',
+    variantGroup: 'audit',
+    variantKey: 'c',
     scoring: {
       model: 'sum-with-severity',
       minScore: 0,
