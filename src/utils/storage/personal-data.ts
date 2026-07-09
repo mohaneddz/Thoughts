@@ -6,6 +6,7 @@ export interface StoredTestDraft {
   slug: string;
   answers: Record<string, AnswerValue>;
   index: number;
+  mode?: 'full' | 'guided';
   updatedAt: string;
 }
 
@@ -16,8 +17,8 @@ export interface PersonalDataSnapshot {
   drafts: StoredTestDraft[];
 }
 
-const STORAGE_KEY = 'thoughts.personal-data.v1';
-const STORAGE_EVENT = 'thoughts:personal-data';
+export const STORAGE_KEY = 'happy-healhty-human.personal-data.v1';
+const STORAGE_EVENT = 'happy-healhty-human:personal-data';
 
 const emptySnapshot: PersonalDataSnapshot = {
   checkIns: [],
