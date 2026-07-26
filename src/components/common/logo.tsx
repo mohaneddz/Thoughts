@@ -6,15 +6,15 @@ export function Logo({ compact = false }: { compact?: boolean }) {
   return (
     <Link href='/' className='inline-flex items-center gap-2'>
       <Image
-        src='/images/brand/happy-healhty-human-logo.png'
-        alt='Happy Healhty Human logo'
+        src='/images/brand/happy-healthy-human-logo.png'
+        alt='Happy Healthy Human logo'
         width={28}
         height={28}
         className='h-7 w-7 rounded-sm object-contain'
         priority
       />
-      <span className={cn('font-heading text-3xl leading-none text-[var(--color-text-strong)]', compact && 'text-2xl')}>
-        Happy Healhty Human
+      <span className={cn('font-heading text-2xl leading-none text-[var(--color-text-strong)]', compact && 'text-xl')}>
+        Happy Healthy Human
       </span>
     </Link>
   );

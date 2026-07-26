@@ -67,7 +67,7 @@ export function ResultPageClient({ resultId }: { resultId: string }) {
             setSaved(true);
           }}
         >
-          {saved ? 'Saved to Happy Healhty Human' : 'Save to Happy Healhty Human'}
+          {saved ? 'Saved to Happy Healthy Human' : 'Save to Happy Healthy Human'}
           <BookmarkPlus size={14} />
         </Button>
         <Link href={routes.test(retakeSlug)}>

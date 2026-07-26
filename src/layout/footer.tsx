@@ -12,12 +12,19 @@ export function Footer() {
     { href: routes.dashboard, label: 'Insight dashboard' },
   ];
 
+  const moreLinks = [
+    { href: routes.collections, label: 'Collections' },
+    { href: routes.reflectionTools, label: 'Reflection tools' },
+    { href: routes.about, label: 'About' },
+    { href: routes.privacy, label: 'Privacy' },
+  ];
+
   return (
     <footer className='mt-16 pb-24 pt-4 md:pb-10'>
       <div className='mx-auto max-w-6xl px-4 md:px-6'>
         <div className='relative overflow-hidden rounded-[1.9rem] border border-[var(--color-panel-border)] bg-[var(--color-panel)] shadow-[0_18px_48px_rgba(20,32,43,0.07)]'>
           <div className='absolute inset-x-0 top-0 h-px bg-[linear-gradient(90deg,transparent,rgba(45,106,103,0.45),transparent)] opacity-70' />
-          <div className='grid gap-8 px-5 py-6 md:px-7 lg:grid-cols-[1.2fr_0.8fr] lg:gap-10 lg:py-7'>
+          <div className='grid gap-8 px-5 py-6 md:px-7 lg:grid-cols-[1.1fr_0.65fr_0.65fr] lg:gap-10 lg:py-7'>
             <div className='space-y-4 text-[var(--color-text)]'>
               <Logo compact />
               <div className='max-w-lg space-y-2.5'>
@@ -47,6 +54,17 @@ export function Footer() {
               <p className='text-sm font-semibold uppercase tracking-[0.16em] text-[var(--color-muted)]'>Practice</p>
               <div className='grid gap-2.5 text-sm text-[var(--color-text)]'>
                 {practiceLinks.map((link) => (
+                  <Link key={link.href} href={link.href} className='transition hover:text-[var(--color-primary)]'>
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            <div className='space-y-3'>
+              <p className='text-sm font-semibold uppercase tracking-[0.16em] text-[var(--color-muted)]'>More</p>
+              <div className='grid gap-2.5 text-sm text-[var(--color-text)]'>
+                {moreLinks.map((link) => (
                   <Link key={link.href} href={link.href} className='transition hover:text-[var(--color-primary)]'>
                     {link.label}
                   </Link>

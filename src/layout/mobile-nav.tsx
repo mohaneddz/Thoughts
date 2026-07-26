@@ -2,11 +2,17 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { BookOpen, Home, ListChecks, Sparkles, UserRound } from 'lucide-react';
+import { BookOpen, Home, ListChecks, Sparkles, UserRound, type LucideIcon } from 'lucide-react';
 import { siteConfig } from '@/config/site';
 import { cn } from '@/utils/cn';
 
-const icons = [Home, ListChecks, Sparkles, BookOpen, UserRound];
+const icons: Record<string, LucideIcon> = {
+  home: Home,
+  tests: ListChecks,
+  'check-in': Sparkles,
+  learn: BookOpen,
+  profile: UserRound,
+};
 
 export function MobileNav() {
   const pathname = usePathname();
@@ -14,9 +20,9 @@ export function MobileNav() {
   return (
     <nav className='fixed bottom-0 left-0 right-0 z-40 border-t border-[var(--color-border)] bg-[var(--color-background)] md:hidden'>
       <div className='mx-auto grid max-w-xl grid-cols-5'>
-        {siteConfig.mobileLinks.map((item, index) => {
-          const Icon = icons[index];
-          const active = pathname === item.href;
+        {siteConfig.mobileLinks.map((item) => {
+          const Icon = icons[item.icon];
+          const active = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href);
           return (
             <Link
               key={item.href}

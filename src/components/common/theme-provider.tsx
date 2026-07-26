@@ -13,7 +13,7 @@ const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 
 function getInitialTheme(): ThemeMode {
   if (typeof window === 'undefined') return 'light';
-  const saved = localStorage.getItem('happy-healhty-human-theme');
+  const saved = localStorage.getItem('happy-healthy-human-theme');
   return saved === 'dark' ? 'dark' : 'light';
 }
 
@@ -22,7 +22,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
-    localStorage.setItem('happy-healhty-human-theme', theme);
+    localStorage.setItem('happy-healthy-human-theme', theme);
   }, [theme]);
 
   const setTheme = (value: ThemeMode) => {
