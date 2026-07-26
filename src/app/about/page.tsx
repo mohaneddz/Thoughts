@@ -7,7 +7,7 @@ export default function AboutPage() {
     <AppShell className='space-y-5'>
       <AboutIntro />
       <Card>
-        <h2 className='font-heading text-3xl'>Why the name Happy Healhty Human</h2>
+        <h2 className='font-heading text-3xl'>Why the name Happy Healthy Human</h2>
         <p className='mt-2 text-sm text-[var(--color-muted)]'>The name points toward growth, balance, and self-respect. The goal is reflection that helps you become a happier, healthier human without reducing you to a label.</p>
       </Card>
       <Card>

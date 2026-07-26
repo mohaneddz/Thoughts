@@ -1,5 +1,5 @@
 <h1 style="font-family: Arial, sans-serif; font-size: 36px; color: #6DA8F2; border-bottom: 3px solid #6DA8F2; padding-bottom: 8px;">
-  Happy Healhty Human - Reflection and Personal Insight Platform
+  Happy Healthy Human - Reflection and Personal Insight Platform
 </h1>
 
 

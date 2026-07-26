@@ -26,6 +26,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='en' className={`${inter.variable} ${playfair.variable}`} data-scroll-behavior='smooth'>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "(function(){try{var t=localStorage.getItem('happy-healthy-human-theme');document.documentElement.dataset.theme=t==='dark'?'dark':'light';}catch(e){}})();",
+          }}
+        />
+      </head>
       <body>
         <AppProviders>{children}</AppProviders>
       </body>
