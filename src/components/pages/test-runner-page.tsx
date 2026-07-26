@@ -20,16 +20,11 @@ import { Progress } from '@/components/ui/progress';
 import { usePersonalData } from '@/hooks/use-personal-data';
 import { routes } from '@/config/routes';
 import { scoreTestForDefinition, toResultSummaryFromBreakdown } from '@/utils/scoring';
+import { crisisResources } from '@/data/crisis-resources';
 import type { TestQuestion } from '@/types/test';
 import type { AnswerValue } from '@/types/common';
 
 type TestMode = 'full' | 'guided';
-
-const crisisResources = [
-  'If you are in immediate danger, call emergency services now.',
-  'US & Canada: Call or text 988 (Suicide & Crisis Lifeline).',
-  'If you are outside the US, contact your local emergency or crisis line.',
-];
 
 function passesVisibility(question: TestQuestion, answers: Record<string, AnswerValue>): boolean {
   if (!question.visibilityCondition) return true;
@@ -232,7 +227,7 @@ export function TestRunnerPage({ slug }: { slug: string }) {
   }, [answers, isDraftReady, mode, persistDraft, safeIndex]);
 
   const finishTest = () => {
-    const result = toResultSummaryFromBreakdown(test, score);
+    const result = toResultSummaryFromBreakdown(test, score, answers);
     saveResult(result);
     clearDraft(test.slug);
     router.push(routes.result(result.id));
@@ -345,7 +340,9 @@ export function TestRunnerPage({ slug }: { slug: string }) {
               </div>
               <ul className='space-y-2 rounded-[1.25rem] border border-[var(--color-border)] p-4 text-sm text-[var(--color-muted)]'>
                 {crisisResources.map((resource) => (
-                  <li key={resource}>&bull; {resource}</li>
+                  <li key={resource.label}>
+                    <span className='font-semibold text-[var(--color-text)]'>{resource.label}:</span> {resource.detail}
+                  </li>
                 ))}
               </ul>
               <Button onClick={() => setStarted(true)}>I understand, continue</Button>
@@ -400,10 +397,10 @@ export function TestRunnerPage({ slug }: { slug: string }) {
 
               {(test.riskLevel === 'high' || test.tags.includes('suicide-risk')) &&
               (mode === 'full' || safeIndex === visibleQuestions.length - 1) ? (
-                <div className='rounded-[1.2rem] border border-amber-400/30 bg-amber-100/50 p-4 text-sm text-amber-900'>
+                <div className='rounded-[1.2rem] border border-[var(--color-warning-border)] bg-[var(--color-warning-bg)] p-4 text-sm text-[var(--color-warning-text)]'>
                   <p className='inline-flex items-center gap-1 font-semibold'>
                     <TriangleAlert size={14} />
-                    If you are feeling unsafe now, seek immediate support.
+                    If you are feeling unsafe now, call or text 988 (US & Canada) or your local emergency number.
                   </p>
                 </div>
               ) : null}

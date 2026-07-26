@@ -1,5 +1,6 @@
 import { AppShell } from '@/components/common/app-shell';
 import { Card } from '@/components/ui/card';
+import { crisisResources } from '@/data/crisis-resources';
 
 export default function PrivacyPage() {
   return (
@@ -13,7 +14,21 @@ export default function PrivacyPage() {
       </div>
       <Card>
         <h2 className='font-semibold'>Important</h2>
-        <p className='mt-2 text-sm text-[var(--color-muted)]'>This is not therapy or diagnosis. If you feel in immediate danger or severe distress, seek local emergency support or a qualified professional.</p>
+        <p className='mt-2 text-sm text-[var(--color-muted)]'>This is not therapy or diagnosis. A few tests here are real clinical screeners (e.g. depression, anxiety, PTSD, suicide-risk screening) offered for informational reflection only, not assessment by a qualified professional.</p>
+        <ul className='mt-3 space-y-2 rounded-[1.25rem] border border-[var(--color-border)] p-4 text-sm text-[var(--color-muted)]'>
+          {crisisResources.map((resource) => (
+            <li key={resource.label}>
+              {resource.href ? (
+                <a href={resource.href} className='font-semibold text-[var(--color-primary)] underline'>
+                  {resource.label}
+                </a>
+              ) : (
+                <span className='font-semibold text-[var(--color-text)]'>{resource.label}</span>
+              )}
+              : {resource.detail}
+            </li>
+          ))}
+        </ul>
       </Card>
     </AppShell>
   );

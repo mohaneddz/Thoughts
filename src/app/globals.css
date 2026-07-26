@@ -1,5 +1,7 @@
 @import 'tailwindcss';
 
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
 :root {
   --font-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-heading: var(--font-playfair), ui-serif, Georgia, serif;
@@ -18,6 +20,13 @@
   --shadow-card: 0 22px 40px rgba(20, 32, 43, 0.08);
   --color-glow-primary: rgba(45, 106, 103, 0.18);
   --color-glow-accent: rgba(184, 116, 68, 0.16);
+
+  --color-warning-bg: rgba(245, 158, 11, 0.12);
+  --color-warning-border: rgba(245, 158, 11, 0.35);
+  --color-warning-text: #78350f;
+  --color-danger-bg: rgba(220, 38, 38, 0.1);
+  --color-danger-border: rgba(220, 38, 38, 0.35);
+  --color-danger-text: #7f1d1d;
 }
 
 :root[data-theme='dark'] {
@@ -35,6 +44,13 @@
   --shadow-card: 0 20px 42px rgba(0, 0, 0, 0.32);
   --color-glow-primary: rgba(103, 184, 174, 0.2);
   --color-glow-accent: rgba(214, 154, 99, 0.15);
+
+  --color-warning-bg: rgba(245, 158, 11, 0.16);
+  --color-warning-border: rgba(245, 158, 11, 0.4);
+  --color-warning-text: #fcd34d;
+  --color-danger-bg: rgba(248, 113, 113, 0.14);
+  --color-danger-border: rgba(248, 113, 113, 0.4);
+  --color-danger-text: #fecaca;
 }
 
 * {

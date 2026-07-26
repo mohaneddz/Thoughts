@@ -8,6 +8,7 @@ import { ResultsIntro } from '@/sections/results/intro';
 import { ResultSummaryCard } from '@/components/results/result-summary-card';
 import { ScoreChart } from '@/components/results/score-chart';
 import { InsightCard } from '@/components/results/insight-card';
+import { CrisisResourceCard } from '@/components/results/crisis-resource-card';
 import { Button } from '@/components/ui/button';
 import { routes } from '@/config/routes';
 import { useResults } from '@/hooks/use-results';
@@ -25,6 +26,7 @@ export function ResultPageClient({ resultId }: { resultId: string }) {
   return (
     <div className='space-y-5'>
       <ResultsIntro />
+      {result.crisisSignal ? <CrisisResourceCard signal={result.crisisSignal} /> : null}
       <div className='grid gap-4 lg:grid-cols-[1.1fr_1fr]'>
         <ResultSummaryCard result={result} />
         <ScoreChart score={result.score} patterns={result.keyPatterns} />
