@@ -3,6 +3,11 @@ export interface PatternScore {
   value: number;
 }
 
+export interface CrisisSignal {
+  level: 'urgent' | 'elevated';
+  reason: string;
+}
+
 export interface TestResultSummary {
   id: string;
   userId: string;
@@ -16,6 +21,7 @@ export interface TestResultSummary {
   nonMeaning: string[];
   createdAt: string;
   keyPatterns: PatternScore[];
+  crisisSignal?: CrisisSignal;
 }
 
 export type AIInterpretationMode =

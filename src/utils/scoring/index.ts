@@ -1,7 +1,8 @@
 import type { AnswerValue } from '@/types/common';
 import type { TestDefinition, TestQuestion, TestScoreBreakdown } from '@/types/test';
-import type { TestResultSummary } from '@/types/result';
+import type { CrisisSignal, TestResultSummary } from '@/types/result';
 import { sampleResult } from '@/data/tests';
+import { crisisCopy } from '@/data/crisis-resources';
 
 function readRawScore(question: TestQuestion, rawValue: AnswerValue): number {
   if (rawValue == null) return 0;
@@ -129,6 +130,43 @@ export function scoreTestForDefinition(
   };
 }
 
+export function detectCrisisSignal(
+  test: TestDefinition,
+  answers: Record<string, AnswerValue>,
+  breakdown: TestScoreBreakdown,
+): CrisisSignal | undefined {
+  if (test.slug === 'c-ssrs') {
+    const activeIdeation = ['cssrs-q2', 'cssrs-q3', 'cssrs-q4', 'cssrs-q5'].some((id) => answers[id] === 'yes');
+    const behavior = answers['cssrs-q6'] === 'yes';
+    const passiveOnly = answers['cssrs-q1'] === 'yes' && !activeIdeation && !behavior;
+
+    if (activeIdeation || behavior) {
+      return { level: 'urgent', reason: 'Your answers include active suicidal thoughts, a plan, intent, or a related behavior.' };
+    }
+    if (passiveOnly) {
+      return { level: 'elevated', reason: 'Your answers include a wish to be dead or to not wake up.' };
+    }
+    return undefined;
+  }
+
+  if (test.slug === 'phq-9') {
+    const question = test.questions.find((item) => item.id === 'phq9-q9');
+    if (question && readQuestionScore(question, answers['phq9-q9']) > 0) {
+      return { level: 'urgent', reason: 'You indicated some thoughts of self-harm or being better off dead.' };
+    }
+  }
+
+  if (test.slug === 'pcl-5' && breakdown.band?.label === 'Common probable PTSD cutoff range') {
+    return { level: 'elevated', reason: 'Your responses fall in the common probable PTSD cutoff range.' };
+  }
+
+  if (test.slug === 'mdq' && breakdown.band?.label === 'Positive screen rule met') {
+    return { level: 'elevated', reason: 'Your answers meet the common MDQ positive screen rule for bipolar-spectrum symptoms.' };
+  }
+
+  return undefined;
+}
+
 export function scoreTest(): number {
   return 0;
 }
@@ -145,10 +183,14 @@ export function toResultSummary(score: number, testTitle: string): TestResultSum
 export function toResultSummaryFromBreakdown(
   test: TestDefinition,
   breakdown: TestScoreBreakdown,
+  answers: Record<string, AnswerValue> = {},
 ): TestResultSummary {
   const normalized = breakdown.normalizedScore;
-  const pattern =
-    normalized >= 80
+  const crisisSignal = detectCrisisSignal(test, answers, breakdown);
+
+  const pattern = crisisSignal
+    ? crisisCopy[crisisSignal.level].title
+    : normalized >= 80
       ? 'Strongly grounded'
       : normalized >= 60
         ? 'Mostly steady'
@@ -168,6 +210,16 @@ export function toResultSummaryFromBreakdown(
     breakdown.band?.label ?? 'Reading context carefully',
   ];
 
+  const meaning = crisisSignal
+    ? crisisCopy[crisisSignal.level].body
+    : normalized >= 70
+      ? `This result suggests you currently have a workable foundation in ${test.category.toLowerCase()}, with a few edges worth refining.`
+      : `This result suggests ${test.category.toLowerCase()} is costing you more energy right now, and a smaller next step would help more than forcing a full reset.`;
+
+  const nonMeaning = crisisSignal
+    ? ['It is not a diagnosis.', 'It is not a substitute for a real risk assessment by a professional.', 'Reaching out for support is not an overreaction.']
+    : ['It is not a diagnosis.', 'It does not define your identity.', 'It is one snapshot, not your whole story.'];
+
   return {
     id: `result-${Date.now()}`,
     userId: 'local-user',
@@ -177,15 +229,8 @@ export function toResultSummaryFromBreakdown(
     pattern,
     strengths,
     growthAreas,
-    meaning:
-      normalized >= 70
-        ? `This result suggests you currently have a workable foundation in ${test.category.toLowerCase()}, with a few edges worth refining.`
-        : `This result suggests ${test.category.toLowerCase()} is costing you more energy right now, and a smaller next step would help more than forcing a full reset.`,
-    nonMeaning: [
-      'It is not a diagnosis.',
-      'It does not define your identity.',
-      'It is one snapshot, not your whole story.',
-    ],
+    meaning,
+    nonMeaning,
     createdAt: new Date().toISOString(),
     keyPatterns: [
       { label: 'Overall clarity', value: breakdown.normalizedScore },
@@ -193,5 +238,6 @@ export function toResultSummaryFromBreakdown(
       { label: 'Follow-through', value: Math.min(100, breakdown.normalizedScore + 8) },
       { label: 'Recovery room', value: Math.max(15, 88 - breakdown.normalizedScore) },
     ],
+    crisisSignal,
   };
 }
