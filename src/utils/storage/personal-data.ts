@@ -17,8 +17,8 @@ export interface PersonalDataSnapshot {
   drafts: StoredTestDraft[];
 }
 
-export const STORAGE_KEY = 'happy-healhty-human.personal-data.v1';
-const STORAGE_EVENT = 'happy-healhty-human:personal-data';
+export const STORAGE_KEY = 'happy-healthy-human.personal-data.v1';
+const STORAGE_EVENT = 'happy-healthy-human:personal-data';
 
 const emptySnapshot: PersonalDataSnapshot = {
   checkIns: [],

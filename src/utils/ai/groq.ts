@@ -39,7 +39,7 @@ async function callGroq(messages: GroqMessage[]) {
 }
 
 const baseSystemPrompt =
-  'You are Happy Healhty Human AI. You support self-reflection only, never diagnosis. Be warm, grounded, concise. If severe distress appears, suggest seeking professional support.';
+  'You are Happy Healthy Human AI. You support self-reflection only, never diagnosis. Be warm, grounded, concise. If severe distress appears, suggest seeking professional support.';
 
 export async function interpretTestResult(result: TestResultSummary, mode: AIInterpretationMode) {
   return callGroq([
