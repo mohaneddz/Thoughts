@@ -9,6 +9,7 @@ import { ResultSummaryCard } from '@/components/results/result-summary-card';
 import { ScoreChart } from '@/components/results/score-chart';
 import { InsightCard } from '@/components/results/insight-card';
 import { CrisisResourceCard } from '@/components/results/crisis-resource-card';
+import { DomainBreakdownCard } from '@/components/results/domain-breakdown-card';
 import { Button } from '@/components/ui/button';
 import { routes } from '@/config/routes';
 import { useResults } from '@/hooks/use-results';
@@ -31,6 +32,8 @@ export function ResultPageClient({ resultId }: { resultId: string }) {
         <ResultSummaryCard result={result} />
         <ScoreChart score={result.score} patterns={result.keyPatterns} />
       </div>
+
+      {result.domains?.length ? <DomainBreakdownCard domains={result.domains} /> : null}
 
       <section className='grid gap-4 md:grid-cols-2 xl:grid-cols-4'>
         <InsightCard title='Top strengths'>

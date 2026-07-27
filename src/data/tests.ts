@@ -35,6 +35,30 @@ const who5Choices: ChoiceOption[] = [
   { value: 'none', label: 'At no time', score: 0 },
 ];
 
+const dassDepressionBands = [
+  { label: 'Normal', min: 0, max: 9 },
+  { label: 'Mild', min: 10, max: 13 },
+  { label: 'Moderate', min: 14, max: 20 },
+  { label: 'Severe', min: 21, max: 27 },
+  { label: 'Extremely severe', min: 28, max: 42 },
+];
+
+const dassAnxietyBands = [
+  { label: 'Normal', min: 0, max: 7 },
+  { label: 'Mild', min: 8, max: 9 },
+  { label: 'Moderate', min: 10, max: 14 },
+  { label: 'Severe', min: 15, max: 19 },
+  { label: 'Extremely severe', min: 20, max: 42 },
+];
+
+const dassStressBands = [
+  { label: 'Normal', min: 0, max: 14 },
+  { label: 'Mild', min: 15, max: 18 },
+  { label: 'Moderate', min: 19, max: 25 },
+  { label: 'Severe', min: 26, max: 33 },
+  { label: 'Extremely severe', min: 34, max: 42 },
+];
+
 const rosenbergChoices: ChoiceOption[] = [
   { value: 'strongly-agree', label: 'Strongly agree', score: 3 },
   { value: 'agree', label: 'Agree', score: 2 },
@@ -849,11 +873,11 @@ export const testsData: TestDefinition[] = [
       minScore: 0,
       maxScore: 27,
       cutoffBands: [
-        { label: 'Minimal', min: 0, max: 4 },
-        { label: 'Mild', min: 5, max: 9 },
-        { label: 'Moderate', min: 10, max: 14 },
-        { label: 'Moderately severe', min: 15, max: 19 },
-        { label: 'Severe', min: 20, max: 27 },
+        { label: 'Minimal', min: 0, max: 4, description: 'little to no indication of depressive symptoms in the last two weeks' },
+        { label: 'Mild', min: 5, max: 9, description: 'some mild depressive symptoms worth keeping an eye on' },
+        { label: 'Moderate', min: 10, max: 14, description: 'a moderate symptom burden that many people find worth discussing with a professional' },
+        { label: 'Moderately severe', min: 15, max: 19, description: 'a considerable symptom burden' },
+        { label: 'Severe', min: 20, max: 27, description: 'a high symptom burden' },
       ],
     },
     questions: makeFrequencyQuestions('phq9', phqPrompts),
@@ -878,11 +902,11 @@ export const testsData: TestDefinition[] = [
       minScore: 0,
       maxScore: 24,
       cutoffBands: [
-        { label: 'Minimal', min: 0, max: 4 },
-        { label: 'Mild', min: 5, max: 9 },
-        { label: 'Moderate', min: 10, max: 14 },
-        { label: 'Moderately severe', min: 15, max: 19 },
-        { label: 'Severe', min: 20, max: 24 },
+        { label: 'Minimal', min: 0, max: 4, description: 'little to no indication of depressive symptoms in the last two weeks' },
+        { label: 'Mild', min: 5, max: 9, description: 'some mild depressive symptoms worth keeping an eye on' },
+        { label: 'Moderate', min: 10, max: 14, description: 'a moderate symptom burden that many people find worth discussing with a professional' },
+        { label: 'Moderately severe', min: 15, max: 19, description: 'a considerable symptom burden' },
+        { label: 'Severe', min: 20, max: 24, description: 'a high symptom burden' },
       ],
     },
     questions: makeFrequencyQuestions('phq8', phqPrompts.slice(0, 8)),
@@ -907,8 +931,8 @@ export const testsData: TestDefinition[] = [
       minScore: 0,
       maxScore: 6,
       cutoffBands: [
-        { label: 'Lower likelihood', min: 0, max: 2 },
-        { label: 'Positive screen threshold', min: 3, max: 6 },
+        { label: 'Lower likelihood', min: 0, max: 2, description: 'a lower likelihood of a depressive disorder based on this ultra-brief screen' },
+        { label: 'Positive screen threshold', min: 3, max: 6, description: 'a positive screen — the fuller PHQ-9 would give a more complete picture' },
       ],
     },
     questions: makeFrequencyQuestions('phq2', phqPrompts.slice(0, 2)),
@@ -933,10 +957,10 @@ export const testsData: TestDefinition[] = [
       minScore: 0,
       maxScore: 21,
       cutoffBands: [
-        { label: 'Minimal', min: 0, max: 4 },
-        { label: 'Mild', min: 5, max: 9 },
-        { label: 'Moderate', min: 10, max: 14 },
-        { label: 'Severe', min: 15, max: 21 },
+        { label: 'Minimal', min: 0, max: 4, description: 'little to no indication of anxiety symptoms in the last two weeks' },
+        { label: 'Mild', min: 5, max: 9, description: 'some mild anxiety symptoms worth keeping an eye on' },
+        { label: 'Moderate', min: 10, max: 14, description: 'a moderate symptom burden that many people find worth discussing with a professional' },
+        { label: 'Severe', min: 15, max: 21, description: 'a high symptom burden' },
       ],
     },
     questions: makeFrequencyQuestions('gad7', gadPrompts),
@@ -961,8 +985,8 @@ export const testsData: TestDefinition[] = [
       minScore: 0,
       maxScore: 6,
       cutoffBands: [
-        { label: 'Lower likelihood', min: 0, max: 2 },
-        { label: 'Positive screen threshold', min: 3, max: 6 },
+        { label: 'Lower likelihood', min: 0, max: 2, description: 'a lower likelihood of an anxiety disorder based on this ultra-brief screen' },
+        { label: 'Positive screen threshold', min: 3, max: 6, description: 'a positive screen — the fuller GAD-7 would give a more complete picture' },
       ],
     },
     questions: makeFrequencyQuestions('gad2', gadPrompts.slice(0, 2)),
@@ -987,9 +1011,9 @@ export const testsData: TestDefinition[] = [
       minScore: 0,
       maxScore: 63,
       domains: [
-        { id: 'depression', label: 'Depression (x2)', questionIds: ['dass21-q3', 'dass21-q5', 'dass21-q10', 'dass21-q13', 'dass21-q16', 'dass21-q17', 'dass21-q21'], multiplier: 2 },
-        { id: 'anxiety', label: 'Anxiety (x2)', questionIds: ['dass21-q2', 'dass21-q4', 'dass21-q7', 'dass21-q9', 'dass21-q15', 'dass21-q19', 'dass21-q20'], multiplier: 2 },
-        { id: 'stress', label: 'Stress (x2)', questionIds: ['dass21-q1', 'dass21-q6', 'dass21-q8', 'dass21-q11', 'dass21-q12', 'dass21-q14', 'dass21-q18'], multiplier: 2 },
+        { id: 'depression', label: 'Depression', questionIds: ['dass21-q3', 'dass21-q5', 'dass21-q10', 'dass21-q13', 'dass21-q16', 'dass21-q17', 'dass21-q21'], multiplier: 2, cutoffBands: dassDepressionBands },
+        { id: 'anxiety', label: 'Anxiety', questionIds: ['dass21-q2', 'dass21-q4', 'dass21-q7', 'dass21-q9', 'dass21-q15', 'dass21-q19', 'dass21-q20'], multiplier: 2, cutoffBands: dassAnxietyBands },
+        { id: 'stress', label: 'Stress', questionIds: ['dass21-q1', 'dass21-q6', 'dass21-q8', 'dass21-q11', 'dass21-q12', 'dass21-q14', 'dass21-q18'], multiplier: 2, cutoffBands: dassStressBands },
       ],
     },
     questions: makeFrequencyQuestions('dass21', dass21Prompts),
@@ -1014,9 +1038,9 @@ export const testsData: TestDefinition[] = [
       minScore: 0,
       maxScore: 126,
       domains: [
-        { id: 'depression', label: 'Depression', questionIds: ['dass42-q3', 'dass42-q5', 'dass42-q10', 'dass42-q13', 'dass42-q16', 'dass42-q17', 'dass42-q21', 'dass42-q24', 'dass42-q26', 'dass42-q31', 'dass42-q34', 'dass42-q37', 'dass42-q38', 'dass42-q42'] },
-        { id: 'anxiety', label: 'Anxiety', questionIds: ['dass42-q2', 'dass42-q4', 'dass42-q7', 'dass42-q9', 'dass42-q15', 'dass42-q19', 'dass42-q20', 'dass42-q23', 'dass42-q25', 'dass42-q28', 'dass42-q30', 'dass42-q36', 'dass42-q40', 'dass42-q41'] },
-        { id: 'stress', label: 'Stress', questionIds: ['dass42-q1', 'dass42-q6', 'dass42-q8', 'dass42-q11', 'dass42-q12', 'dass42-q14', 'dass42-q18', 'dass42-q22', 'dass42-q27', 'dass42-q29', 'dass42-q32', 'dass42-q33', 'dass42-q35', 'dass42-q39'] },
+        { id: 'depression', label: 'Depression', questionIds: ['dass42-q3', 'dass42-q5', 'dass42-q10', 'dass42-q13', 'dass42-q16', 'dass42-q17', 'dass42-q21', 'dass42-q24', 'dass42-q26', 'dass42-q31', 'dass42-q34', 'dass42-q37', 'dass42-q38', 'dass42-q42'], cutoffBands: dassDepressionBands },
+        { id: 'anxiety', label: 'Anxiety', questionIds: ['dass42-q2', 'dass42-q4', 'dass42-q7', 'dass42-q9', 'dass42-q15', 'dass42-q19', 'dass42-q20', 'dass42-q23', 'dass42-q25', 'dass42-q28', 'dass42-q30', 'dass42-q36', 'dass42-q40', 'dass42-q41'], cutoffBands: dassAnxietyBands },
+        { id: 'stress', label: 'Stress', questionIds: ['dass42-q1', 'dass42-q6', 'dass42-q8', 'dass42-q11', 'dass42-q12', 'dass42-q14', 'dass42-q18', 'dass42-q22', 'dass42-q27', 'dass42-q29', 'dass42-q32', 'dass42-q33', 'dass42-q35', 'dass42-q39'], cutoffBands: dassStressBands },
       ],
     },
     questions: makeFrequencyQuestions('dass42', dass42Prompts),
@@ -1093,8 +1117,8 @@ export const testsData: TestDefinition[] = [
       minScore: 0,
       maxScore: 25,
       cutoffBands: [
-        { label: 'Lower well-being range', min: 0, max: 12 },
-        { label: 'Higher well-being range', min: 13, max: 25 },
+        { label: 'Lower well-being range', min: 0, max: 12, description: 'a lower well-being score; if this feels persistent, it may be worth a fuller depression screen' },
+        { label: 'Higher well-being range', min: 13, max: 25, description: 'a higher well-being score over the last two weeks' },
       ],
       notes: 'WHO-5 raw score is commonly multiplied by 4 to get a 0-100 well-being percentage.',
     },
@@ -1126,10 +1150,10 @@ export const testsData: TestDefinition[] = [
       minScore: 0,
       maxScore: 40,
       cutoffBands: [
-        { label: 'Lower risk', min: 0, max: 7 },
-        { label: 'Hazardous use', min: 8, max: 15 },
-        { label: 'Harmful use', min: 16, max: 19 },
-        { label: 'Possible dependence', min: 20, max: 40 },
+        { label: 'Lower risk', min: 0, max: 7, description: 'drinking patterns in the lower-risk range' },
+        { label: 'Hazardous use', min: 8, max: 15, description: 'a pattern associated with a raised risk of harm' },
+        { label: 'Harmful use', min: 16, max: 19, description: 'a pattern already likely causing harm' },
+        { label: 'Possible dependence', min: 20, max: 40, description: 'a pattern consistent with possible alcohol dependence — worth a real conversation with a professional' },
       ],
     },
     questions: [
