@@ -64,6 +64,7 @@ export interface ScoringDomain {
   label: string;
   questionIds: string[];
   multiplier?: number;
+  cutoffBands?: SeverityBand[];
 }
 
 export interface TestScoringConfig {
@@ -111,5 +112,5 @@ export interface TestScoreBreakdown {
   maxScore: number;
   normalizedScore: number;
   band?: SeverityBand;
-  domains?: Array<{ id: string; label: string; score: number; maxScore: number }>;
+  domains?: Array<{ id: string; label: string; score: number; maxScore: number; band?: SeverityBand }>;
 }

@@ -1,3 +1,5 @@
+import type { SeverityBand } from '@/types/test';
+
 export interface PatternScore {
   label: string;
   value: number;
@@ -6,6 +8,14 @@ export interface PatternScore {
 export interface CrisisSignal {
   level: 'urgent' | 'elevated';
   reason: string;
+}
+
+export interface DomainResult {
+  id: string;
+  label: string;
+  score: number;
+  maxScore: number;
+  band?: SeverityBand;
 }
 
 export interface TestResultSummary {
@@ -22,6 +32,7 @@ export interface TestResultSummary {
   createdAt: string;
   keyPatterns: PatternScore[];
   crisisSignal?: CrisisSignal;
+  domains?: DomainResult[];
 }
 
 export type AIInterpretationMode =

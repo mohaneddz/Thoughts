@@ -1,5 +1,5 @@
 import type { AnswerValue } from '@/types/common';
-import type { TestDefinition, TestQuestion, TestScoreBreakdown } from '@/types/test';
+import type { ScoringDomain, TestDefinition, TestQuestion, TestScoreBreakdown } from '@/types/test';
 import type { CrisisSignal, TestResultSummary } from '@/types/result';
 import { sampleResult } from '@/data/tests';
 import { crisisCopy } from '@/data/crisis-resources';
@@ -46,6 +46,10 @@ function readQuestionScore(question: TestQuestion, rawValue: AnswerValue): numbe
 
 function resolveBand(test: TestDefinition, score: number) {
   return test.scoring.cutoffBands?.find((band) => score >= band.min && score <= band.max);
+}
+
+function resolveDomainBand(domain: ScoringDomain, score: number) {
+  return domain.cutoffBands?.find((band) => score >= band.min && score <= band.max);
 }
 
 function computeMaxScore(test: TestDefinition): number {
@@ -113,11 +117,15 @@ export function scoreTestForDefinition(
       return total;
     }, 0);
 
+    const finalScore = domain.multiplier ? domainScore * domain.multiplier : domainScore;
+    const finalMax = domain.multiplier ? baseMax * domain.multiplier : baseMax;
+
     return {
       id: domain.id,
       label: domain.label,
-      score: domain.multiplier ? domainScore * domain.multiplier : domainScore,
-      maxScore: baseMax,
+      score: finalScore,
+      maxScore: finalMax,
+      band: resolveDomainBand(domain, finalScore),
     };
   });
 
@@ -167,6 +175,27 @@ export function detectCrisisSignal(
   return undefined;
 }
 
+function worstDomainSeverity(
+  test: TestDefinition,
+  breakdown: TestScoreBreakdown,
+): { domainLabel: string; band: NonNullable<TestScoreBreakdown['band']> } | undefined {
+  if (!breakdown.domains?.length) return undefined;
+
+  let best: { domainLabel: string; band: NonNullable<TestScoreBreakdown['band']>; rank: number } | undefined;
+
+  for (const domainResult of breakdown.domains) {
+    if (!domainResult.band) continue;
+    const original = test.scoring.domains?.find((item) => item.id === domainResult.id);
+    const rank = original?.cutoffBands?.findIndex((band) => band.label === domainResult.band!.label) ?? -1;
+    if (rank < 0) continue;
+    if (!best || rank > best.rank) {
+      best = { domainLabel: domainResult.label.replace(/\s*\(x\d+\)\s*$/, ''), band: domainResult.band, rank };
+    }
+  }
+
+  return best ? { domainLabel: best.domainLabel, band: best.band } : undefined;
+}
+
 export function scoreTest(): number {
   return 0;
 }
@@ -187,16 +216,23 @@ export function toResultSummaryFromBreakdown(
 ): TestResultSummary {
   const normalized = breakdown.normalizedScore;
   const crisisSignal = detectCrisisSignal(test, answers, breakdown);
+  const isClinicalScreener = !crisisSignal && test.tags.includes('clinical-screener');
+  const clinicalBand = isClinicalScreener ? breakdown.band : undefined;
+  const worstDomain = isClinicalScreener && !clinicalBand ? worstDomainSeverity(test, breakdown) : undefined;
 
   const pattern = crisisSignal
     ? crisisCopy[crisisSignal.level].title
-    : normalized >= 80
-      ? 'Strongly grounded'
-      : normalized >= 60
-        ? 'Mostly steady'
-        : normalized >= 40
-          ? 'Mixed right now'
-          : 'Needs attention';
+    : clinicalBand
+      ? clinicalBand.label
+      : worstDomain
+        ? `${worstDomain.domainLabel}: ${worstDomain.band.label}`
+        : normalized >= 80
+          ? 'Strongly grounded'
+          : normalized >= 60
+            ? 'Mostly steady'
+            : normalized >= 40
+              ? 'Mixed right now'
+              : 'Needs attention';
 
   const strengths = [
     normalized >= 65 ? 'Clear self-awareness' : 'Honest signal',
@@ -212,13 +248,19 @@ export function toResultSummaryFromBreakdown(
 
   const meaning = crisisSignal
     ? crisisCopy[crisisSignal.level].body
-    : normalized >= 70
-      ? `This result suggests you currently have a workable foundation in ${test.category.toLowerCase()}, with a few edges worth refining.`
-      : `This result suggests ${test.category.toLowerCase()} is costing you more energy right now, and a smaller next step would help more than forcing a full reset.`;
+    : clinicalBand
+      ? `Your responses fall in the "${clinicalBand.label}" range on this screener${clinicalBand.description ? ` — ${clinicalBand.description}` : ''}. This is a screening signal for reflection, not a diagnosis; if it feels relevant, it may be worth discussing with a doctor or therapist.`
+      : worstDomain
+        ? `Your ${worstDomain.domainLabel.toLowerCase()} subscale falls in the "${worstDomain.band.label}" range. The other subscales are broken out below. This is a screening signal for reflection, not a diagnosis; if it feels relevant, it may be worth discussing with a doctor or therapist.`
+        : normalized >= 70
+          ? `This result suggests you currently have a workable foundation in ${test.category.toLowerCase()}, with a few edges worth refining.`
+          : `This result suggests ${test.category.toLowerCase()} is costing you more energy right now, and a smaller next step would help more than forcing a full reset.`;
 
   const nonMeaning = crisisSignal
     ? ['It is not a diagnosis.', 'It is not a substitute for a real risk assessment by a professional.', 'Reaching out for support is not an overreaction.']
-    : ['It is not a diagnosis.', 'It does not define your identity.', 'It is one snapshot, not your whole story.'];
+    : clinicalBand || worstDomain
+      ? ['It is not a diagnosis.', 'A screening tool can be wrong in either direction.', 'Only a qualified professional can properly assess this.']
+      : ['It is not a diagnosis.', 'It does not define your identity.', 'It is one snapshot, not your whole story.'];
 
   return {
     id: `result-${Date.now()}`,
@@ -239,5 +281,6 @@ export function toResultSummaryFromBreakdown(
       { label: 'Recovery room', value: Math.max(15, 88 - breakdown.normalizedScore) },
     ],
     crisisSignal,
+    domains: breakdown.domains,
   };
 }
