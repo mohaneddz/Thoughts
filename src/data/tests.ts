@@ -16,6 +16,13 @@ const freq4: ChoiceOption[] = [
   { value: 'nearly-every-day', label: 'Nearly every day', score: 3 },
 ];
 
+const dassChoices: ChoiceOption[] = [
+  { value: 'not-at-all', label: 'Did not apply to me at all', score: 0 },
+  { value: 'some-degree', label: 'Applied to me to some degree, or some of the time', score: 1 },
+  { value: 'considerable', label: 'Applied to me to a considerable degree, or a good part of the time', score: 2 },
+  { value: 'very-much', label: 'Applied to me very much, or most of the time', score: 3 },
+];
+
 const yesNo: ChoiceOption[] = [
   { value: 'yes', label: 'Yes', score: 1 },
   { value: 'no', label: 'No', score: 0 },
@@ -72,6 +79,16 @@ function makeFrequencyQuestions(prefix: string, prompts: string[]): TestQuestion
     prompt,
     type: 'frequency',
     choices: freq4,
+    required: true,
+  }));
+}
+
+function makeDassQuestions(prefix: string, prompts: string[]): TestQuestion[] {
+  return prompts.map((prompt, index) => ({
+    id: `${prefix}-q${index + 1}`,
+    prompt,
+    type: 'frequency',
+    choices: dassChoices,
     required: true,
   }));
 }
@@ -178,8 +195,8 @@ const phqPrompts = [
   'Feeling tired or having little energy',
   'Poor appetite or overeating',
   'Feeling bad about yourself - or that you are a failure or have let yourself or your family down',
-  'Trouble concentrating on things, such as reading or watching television',
-  'Moving or speaking so slowly that other people could have noticed, or being so fidgety/restless that you have been moving around more than usual',
+  'Trouble concentrating on things, such as reading the newspaper or watching television',
+  'Moving or speaking so slowly that other people could have noticed? Or the opposite — being so fidgety or restless that you have been moving around a lot more than usual',
   'Thoughts that you would be better off dead, or of hurting yourself in some way',
 ];
 
@@ -1016,7 +1033,7 @@ export const testsData: TestDefinition[] = [
         { id: 'stress', label: 'Stress', questionIds: ['dass21-q1', 'dass21-q6', 'dass21-q8', 'dass21-q11', 'dass21-q12', 'dass21-q14', 'dass21-q18'], multiplier: 2, cutoffBands: dassStressBands },
       ],
     },
-    questions: makeFrequencyQuestions('dass21', dass21Prompts),
+    questions: makeDassQuestions('dass21', dass21Prompts),
   },
   {
     id: 'dass-42',
@@ -1043,7 +1060,7 @@ export const testsData: TestDefinition[] = [
         { id: 'stress', label: 'Stress', questionIds: ['dass42-q1', 'dass42-q6', 'dass42-q8', 'dass42-q11', 'dass42-q12', 'dass42-q14', 'dass42-q18', 'dass42-q22', 'dass42-q27', 'dass42-q29', 'dass42-q32', 'dass42-q33', 'dass42-q35', 'dass42-q39'], cutoffBands: dassStressBands },
       ],
     },
-    questions: makeFrequencyQuestions('dass42', dass42Prompts),
+    questions: makeDassQuestions('dass42', dass42Prompts),
   },
   {
     id: 'pss-10',
@@ -1399,8 +1416,8 @@ export const testsData: TestDefinition[] = [
     status: 'active' as const,
     riskLevel: 'low' as const,
     tags: ['original', 'non-clinical'],
-    sourceUrl: 'https://www.ipip.ori.org/',
-    licenseNote: 'Original in-app authoring; not an official clinical instrument.',
+    sourceUrl: '#original',
+    licenseNote: 'Original in-app authoring; not derived from any external instrument.',
     scoring: { model: 'sum-with-severity', minScore: 0, maxScore: 20 },
     questions: createOriginalQuestions(item.slug.replace(/[^a-z0-9]/g, ''), item.theme),
   })),
