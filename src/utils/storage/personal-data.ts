@@ -63,6 +63,15 @@ export function writePersonalData(snapshot: PersonalDataSnapshot) {
   window.dispatchEvent(new Event(STORAGE_EVENT));
 }
 
+export function clearPersonalData() {
+  if (!isBrowser()) {
+    return;
+  }
+
+  window.localStorage.removeItem(STORAGE_KEY);
+  window.dispatchEvent(new Event(STORAGE_EVENT));
+}
+
 export function subscribeToPersonalData(onStoreChange: () => void) {
   if (!isBrowser()) {
     return () => {};
