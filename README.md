@@ -3,18 +3,20 @@
 </h1>
 
 
-A calm self-reflection web app built with Next.js 16, React 19, TypeScript, Tailwind CSS v4, Framer Motion, TanStack Query, Supabase scaffolding, and Groq AI stubs.
+A calm self-reflection web app built with Next.js 16, React 19, TypeScript, Tailwind CSS v4, Framer Motion, TanStack Query, and Groq AI.
 
 ## What is included
 
 - Full App Router foundation for:
   - `/`, `/tests`, `/tests/[slug]`, `/results/[id]`, `/ai-interpreter`
-  - `/check-in`, `/dashboard`, `/reflection-tools`, `/collections`, `/learn`, `/saved-thoughts`, `/privacy`, `/about`
+  - `/check-in`, `/dashboard`, `/reflection-tools`, `/collections`, `/learn`, `/saved-thoughts`, `/profile`, `/privacy`, `/about`
 - Dual light/dark theme toggle with persisted preference
-- Typed mock-first data for tests, collections, learn articles, tools, check-ins, and sample results
+- Local-only identity: name, avatar, and accent stored in the browser — no accounts, no sign-in, no server
+- Local-only data: results, check-ins, saved thoughts and in-progress tests live in localStorage, with JSON export and one-step erase
+- Typed data for tests, collections, learn articles, tools, check-ins, and results
 - Reusable component architecture (cards, filters, question flow, results blocks, AI modes, check-in form, state components)
-- Supabase utilities + SQL schema and RLS policies scaffold
-- Groq AI server utilities + API route stub (`/api/ai/interpret`)
+- Crisis-aware result handling for high-risk screeners (C-SSRS, PHQ-9 item 9, PCL-5, MDQ)
+- Groq AI server utilities + API route (`/api/ai/interpret`)
 
 ## Setup
 
@@ -32,16 +34,9 @@ cp .env.example .env
 
 3. Fill required variables in `.env`:
 
-- `NEXT_PUBLIC_SUPABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-- `SUPABASE_SERVICE_ROLE_KEY`
-- `GROQ_API_KEY`
+- `GROQ_API_KEY` — required only for AI interpretation
 - `GROQ_MODEL`
 - `NEXT_PUBLIC_APP_URL`
-
-4. (Optional now, required for real persistence) apply schema in Supabase SQL editor:
-
-- `supabase/schema.sql`
 
 ## Run
 
@@ -58,6 +53,6 @@ pnpm build
 
 ## Notes
 
-- This version is intentionally mock-first for UI and local flows.
-- Supabase/Groq integrations are scaffolded and typed, ready for full auth/data wiring.
+- Everything except AI interpretation runs entirely on-device; the only outbound call is to Groq, and only when a user asks for an interpretation.
 - The app language and disclaimers are explicitly non-clinical and reflection-focused.
+- A handful of tests are real, freely available clinical screeners (PHQ, GAD, DASS, AUDIT, WHO-5, Rosenberg, PCL-5, C-SSRS) offered for informational reflection only. Commercial instruments (MMPI, WAIS, MBTI, Rorschach, TAT, …) are metadata-only placeholders with no item content, and stay hidden from the catalog until properly licensed.
