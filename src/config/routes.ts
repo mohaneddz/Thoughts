@@ -1,6 +1,5 @@
 export const routes = {
   home: '/',
-  auth: '/auth',
   profile: '/profile',
   tests: '/tests',
   test: (slug: string) => `/tests/${slug}`,

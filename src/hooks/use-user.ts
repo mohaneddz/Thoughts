@@ -1,20 +1,17 @@
 'use client';
 
-import { useAuth } from '@/components/common/auth-provider';
+import { useProfile } from '@/hooks/use-profile';
 
+/**
+ * Identity is local-only: there are no accounts, sessions, or servers involved.
+ * Kept as a thin alias over useProfile so callers read naturally.
+ */
 export function useUser() {
-  const { user, profile, isAuthenticated, isLoading } = useAuth();
+  const { profile, hasProfile, displayName } = useProfile();
 
   return {
-    user: user
-      ? {
-          id: user.id,
-          email: user.email ?? '',
-          displayName: profile?.display_name ?? user.user_metadata?.display_name ?? 'Member',
-        }
-      : null,
-    isAuthenticated,
-    isLoading,
+    profile,
+    displayName,
+    hasProfile,
   };
 }
-
