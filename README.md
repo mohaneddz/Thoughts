@@ -44,7 +44,7 @@ cp .env.example .env
 pnpm dev
 ```
 
-Serves on [http://localhost:4321](http://localhost:4321) (not the usual 3000, so it does not collide with other local projects). `pnpm start` uses the same port.
+Serves on [http://localhost:27384](http://localhost:27384). `pnpm start` uses the same port.
 
 ## Quality checks
 
