@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { Check, Download, Trash2, Upload } from 'lucide-react';
+import { Check, Download, FileUp, Trash2, Upload } from 'lucide-react';
 import { AppShell } from '@/components/common/appShell';
 import { Avatar } from '@/components/common/avatar';
 import { Card } from '@/components/ui/card';
@@ -15,9 +15,11 @@ import { cn } from '@/utils/cn';
 
 export function ProfilePageClient() {
   const { profile, updateProfile, hasProfile } = useProfile();
-  const { checkIns, results, savedThoughts, drafts } = usePersonalData();
+  const { checkIns, results, savedThoughts, drafts, importSnapshot } = usePersonalData();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const importInputRef = useRef<HTMLInputElement>(null);
+  const [importMessage, setImportMessage] = useState<string | null>(null);
   const [nameDraft, setNameDraft] = useState<string | null>(null);
   const [avatarError, setAvatarError] = useState<string | null>(null);
   const [savedNote, setSavedNote] = useState(false);
@@ -49,6 +51,21 @@ export function ProfilePageClient() {
       updateProfile({ avatarKind: 'image', avatarImage: dataUrl });
     } catch (error) {
       setAvatarError(error instanceof Error ? error.message : 'Could not use that image.');
+    }
+  };
+
+  const importData = async (file: File | undefined) => {
+    if (!file) return;
+    try {
+      const parsed = JSON.parse(await file.text()) as Record<string, unknown>;
+      if (!Array.isArray(parsed.results) && !Array.isArray(parsed.checkIns) && !Array.isArray(parsed.savedThoughts)) {
+        setImportMessage('That file does not look like a Happy Healthy Human export.');
+        return;
+      }
+      const added = importSnapshot(parsed);
+      setImportMessage(added ? `Imported ${added} new ${added === 1 ? 'entry' : 'entries'}. Anything already here was left as it was.` : 'Everything in that file is already on this device.');
+    } catch {
+      setImportMessage('Could not read that file. Pick a .json export from this app.');
     }
   };
 
@@ -214,10 +231,27 @@ export function ProfilePageClient() {
             </div>
           ))}
         </div>
-        <Button variant='secondary' onClick={exportData}>
-          <Download size={14} />
-          Export everything as JSON
-        </Button>
+        <div className='flex flex-wrap gap-2'>
+          <Button variant='secondary' onClick={exportData}>
+            <Download size={14} />
+            Export everything as JSON
+          </Button>
+          <input
+            ref={importInputRef}
+            type='file'
+            accept='application/json,.json'
+            className='hidden'
+            onChange={(event) => {
+              void importData(event.target.files?.[0]);
+              event.target.value = '';
+            }}
+          />
+          <Button variant='secondary' onClick={() => importInputRef.current?.click()}>
+            <FileUp size={14} />
+            Import an export
+          </Button>
+        </div>
+        {importMessage ? <p className='text-sm text-[var(--color-muted)]' aria-live='polite'>{importMessage}</p> : null}
       </Card>
 
       <Card className='space-y-3 border-[var(--color-danger-border)] bg-[var(--color-danger-bg)]'>

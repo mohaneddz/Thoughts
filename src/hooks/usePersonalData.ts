@@ -95,7 +95,7 @@ export function usePersonalData() {
     let added = 0;
     const merge = <T extends { id: string; createdAt: string }>(existing: T[], extra: T[] | undefined) => {
       const known = new Set(existing.map((item) => item.id));
-      const fresh = (extra ?? []).filter((item) => item && typeof item.id === 'string' && !known.has(item.id));
+      const fresh = (extra ?? []).filter((item) => item && typeof item.id === 'string' && typeof item.createdAt === 'string' && !known.has(item.id));
       added += fresh.length;
       return sortByDateDesc([...existing, ...fresh]);
     };
