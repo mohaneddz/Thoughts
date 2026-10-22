@@ -20,11 +20,15 @@ This is an informational, non-clinical reflection tool. It does not diagnose, tr
   - Trauma & risk: PCL-5 (PTSD Checklist), C-SSRS (Columbia Suicide Severity Rating Scale), MDQ (Mood Disorder Questionnaire)
   - Personality: IPIP Big Five (50 and 100 item), IPIP-NEO (120 and 300 item), IPIP Personality Scales curated pack
   - A set of lighter, non-clinical reflection quizzes (attachment style, overthinking, burnout, values clarity, emotional awareness, social battery, motivation style, habit loops, self-esteem, career direction, thinking style, decision-making style, conflict style, love language, inner critic)
+- **Honest scoring** — every test declares whether a higher score is better, worse or neutral, so a high stress score never reads as good news. Screeners show your score on an interactive band scale; the Big Five, IPIP-NEO-120 (5 domains, 30 facets, published reverse keys) and the IPIP scale pack show a per-trait profile instead of a meaningless grand total. Scoring is covered by Vitest unit tests.
 - **Crisis-aware result handling** — high-risk screeners (C-SSRS, PHQ-9 item 9, PCL-5, MDQ) surface dedicated safety messaging in results rather than a plain score.
-- **Local-first privacy model** — identity (name, avatar, accent) and all data (test results, check-ins, saved thoughts, in-progress tests) live only in `localStorage`. No accounts, no sign-in, no backend database. Full JSON export and one-step erase are built in.
-- **Optional AI interpretation** — `/ai-interpreter` and the `/api/ai/interpret` route call Groq to turn a completed result into a plain-language reflection. This is the only feature that leaves the device, and only fires when the user asks for it.
-- **Check-ins, dashboard, and saved thoughts** — lightweight day-to-day tracking pages (`/check-in`, `/dashboard`, `/saved-thoughts`) alongside the test catalog.
-- **Reflection tools & learn library** — supplementary static content at `/reflection-tools` and `/learn`.
+- **Results history** — every finished test is kept at `/results`, retakes are charted over time, and any result can be deleted.
+- **Interactive reflection tools** — an SVG emotion wheel, a values sorter with drag-to-rank, a weighted decision matrix, an energy drain map, and guided flows for overthinking, "why do I feel this?", conflict prep/debrief and habit loops. Anything you make can be saved to your thoughts.
+- **Local-first privacy model** — identity (name, avatar, accent) and all data (test results, check-ins, saved thoughts, in-progress tests) live only in `localStorage`. No accounts, no sign-in, no backend database. JSON export, merge-import of a previous export, and one-step erase are built in.
+- **Optional AI interpretation** — six interpretation modes plus a follow-up chat (`/api/ai/interpret`, `/api/ai/chat`). Only a zod-validated result summary is sent to Groq (test, score, range, subscales, crisis flag) — never individual answers, names or notes — and only when the user asks.
+- **Check-ins and dashboard** — seven-slider daily check-in with a rule-based read, streaks, 7/30/365-day trend charts (dependency-free SVG) and editable history; the dashboard brings together weekly averages, trends, the latest result per test and recent thoughts.
+- **Saved thoughts** — hand-written notes plus saved takeaways from results, tools and AI, with search, source filters and delete.
+- **Collections & learn library** — guided paths and short articles that link straight to the relevant tests and tools.
 - **Light/dark theme** with persisted preference.
 
 ### Not (yet) available
@@ -34,12 +38,12 @@ Commercial, copyrighted clinical instruments (MMPI, WAIS, MBTI, Rorschach, TAT, 
 ## Routes
 
 - `/` — landing
-- `/tests`, `/tests/[slug]` — screener/quiz catalog and individual test flow
-- `/results/[id]` — a completed result
-- `/ai-interpreter` — Groq-powered plain-language interpretation of a result
-- `/check-in` — day-to-day mood/state check-ins
-- `/dashboard` — overview of check-ins and recent activity
-- `/reflection-tools` — supplementary self-reflection tools
+- `/tests`, `/tests/[slug]` — screener/quiz catalog and individual test flow (unknown or unlicensed slugs return 404)
+- `/results`, `/results/[id]` — result history and a single result
+- `/ai-interpreter` — Groq-powered interpretation and follow-up chat for a result
+- `/check-in` — daily check-ins, trends and history
+- `/dashboard` — streaks, averages, trends and latest results
+- `/reflection-tools`, `/reflection-tools/[id]` — the eight interactive tools
 - `/collections` — grouped/curated sets of tests
 - `/learn` — informational articles
 - `/saved-thoughts` — free-form saved notes
@@ -56,11 +60,12 @@ Commercial, copyrighted clinical instruments (MMPI, WAIS, MBTI, Rorschach, TAT, 
 - Framer Motion
 - TanStack Query
 - Groq AI (optional interpretation calls)
-- Playwright (dev/test)
+- Zod (AI request validation)
+- Vitest (unit tests)
 
 ## Status
 
-Actively developed. Recently migrated off Supabase auth to a fully local, account-free profile — the app now has effectively zero backend beyond the optional Groq call. The commercial personality/clinical instruments remain gated pending licensing.
+Actively developed — see [ROADMAP.md](ROADMAP.md) for the full audit, bug list and phased plan. Scoring correctness, interactive tools, tracking and the AI rework are done; next up is content (rewriting the 15 templated reflection tests, article bodies, more open instruments, region-aware crisis lines) and broader test coverage. The commercial personality/clinical instruments remain gated pending licensing.
 
 ## Setup
 
@@ -94,6 +99,7 @@ Serves on [http://localhost:27384](http://localhost:27384). `pnpm start` uses th
 
 ```bash
 pnpm lint
+pnpm test
 pnpm build
 ```
 
