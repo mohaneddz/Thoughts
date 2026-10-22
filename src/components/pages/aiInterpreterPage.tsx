@@ -7,7 +7,8 @@ import { ModeSelector } from '@/components/ai/modeSelector';
 import { AIChatBox } from '@/components/ai/aiChatBox';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { useResults } from '@/hooks/useResults';
+import { useResult } from '@/hooks/useResults';
+import { EmptyState } from '@/components/common/emptyState';
 import { usePersonalData } from '@/hooks/usePersonalData';
 
 const modes: Array<{ id: AIInterpretationMode; title: string; description: string }> = [
@@ -17,11 +18,24 @@ const modes: Array<{ id: AIInterpretationMode; title: string; description: strin
   { id: 'ask-me-questions', title: 'Ask me questions', description: 'Explore your patterns through guided prompts.' },
 ];
 
-export function AIInterpreterPage({ resultId }: { resultId: string }) {
+export function AIInterpreterPage({ resultId }: { resultId?: string }) {
   const [mode, setMode] = useState<AIInterpretationMode>('gentle-explanation');
   const ai = useAIInterpretation();
-  const result = useResults(resultId);
+  const { result, isReady } = useResult(resultId);
   const { saveThought } = usePersonalData();
+
+  if (!isReady) {
+    return <div className='h-96 animate-pulse rounded-[1.6rem] bg-[var(--color-surface-soft)]' aria-busy />;
+  }
+
+  if (!result) {
+    return (
+      <EmptyState
+        title='Nothing to interpret yet'
+        description='Finish a test first. The interpreter only works on your own results, never on sample data.'
+      />
+    );
+  }
 
   return (
     <div className='space-y-4'>

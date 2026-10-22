@@ -3,6 +3,7 @@ export const routes = {
   profile: '/profile',
   tests: '/tests',
   test: (slug: string) => `/tests/${slug}`,
+  results: '/results',
   result: (id: string) => `/results/${id}`,
   aiInterpreter: '/ai-interpreter',
   checkIn: '/check-in',

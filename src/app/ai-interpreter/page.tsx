@@ -10,7 +10,7 @@ export default async function AIInterpreterRoute({
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const query = await searchParams;
-  const resultId = typeof query.resultId === 'string' ? query.resultId : 'r1';
+  const resultId = typeof query.resultId === 'string' ? query.resultId : undefined;
 
   return (
     <AppShell>
