@@ -86,14 +86,13 @@ export function ResultPageClient({ resultId }: { resultId: string }) {
 
       <ScoreHistoryCard attempts={attempts} currentId={result.id} />
 
-      <section className='grid gap-4 md:grid-cols-2 xl:grid-cols-4'>
+      <section className='grid gap-4 md:grid-cols-3'>
         <InsightCard title={isTraitProfile ? 'Most pronounced' : 'What stands out'}>
           <ul className='space-y-2 text-sm'>{result.strengths.map((item) => <li key={item}>• {item}</li>)}</ul>
         </InsightCard>
         <InsightCard title={isTraitProfile ? 'Least pronounced' : 'Worth trying next'}>
           <ul className='space-y-2 text-sm'>{result.growthAreas.map((item) => <li key={item}>• {item}</li>)}</ul>
         </InsightCard>
-        <InsightCard title='What this might mean'>{result.meaning}</InsightCard>
         <InsightCard title='What this does not mean'>
           <ul className='space-y-2 text-sm'>{result.nonMeaning.map((item) => <li key={item}>• {item}</li>)}</ul>
         </InsightCard>
