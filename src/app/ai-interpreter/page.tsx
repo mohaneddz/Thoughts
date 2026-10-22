@@ -1,5 +1,5 @@
-import { AppShell } from '@/components/common/app-shell';
-import { AIInterpreterPage } from '@/components/pages/ai-interpreter-page';
+import { AppShell } from '@/components/common/appShell';
+import { AIInterpreterPage } from '@/components/pages/aiInterpreterPage';
 
 export default async function AIInterpreterRoute({
   searchParams,

@@ -1,10 +1,10 @@
 'use client';
 
 import { useMemo } from 'react';
-import { CategoryFilter } from '@/components/test/category-filter';
-import { SearchInput } from '@/components/test/search-input';
-import { TestCard } from '@/components/test/test-card';
-import { useTests } from '@/hooks/use-tests';
+import { CategoryFilter } from '@/components/test/categoryFilter';
+import { SearchInput } from '@/components/test/searchInput';
+import { TestCard } from '@/components/test/testCard';
+import { useTests } from '@/hooks/useTests';
 import { TestsIntro } from '@/sections/tests/intro';
 
 export function TestsLibraryPage() {

@@ -1,5 +1,5 @@
-import { AppShell } from '@/components/common/app-shell';
-import { TestRunnerPage } from '@/components/pages/test-runner-page';
+import { AppShell } from '@/components/common/appShell';
+import { TestRunnerPage } from '@/components/pages/testRunnerPage';
 
 export default async function SingleTestPage({
   params,

@@ -2,7 +2,7 @@
 
 import { Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useThemeMode } from '@/components/common/theme-provider';
+import { useThemeMode } from '@/components/common/themeProvider';
 import { useSyncExternalStore } from 'react';
 
 const emptySubscribe = () => () => {};

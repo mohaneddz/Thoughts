@@ -1,4 +1,4 @@
-import { TestCard } from '@/components/test/test-card';
+import { TestCard } from '@/components/test/testCard';
 import { testsData } from '@/data/tests';
 import { buildTestCatalog } from '@/utils/tests/catalog';
 

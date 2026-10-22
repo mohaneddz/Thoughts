@@ -1,4 +1,4 @@
-import { AppShell } from '@/components/common/app-shell';
+import { AppShell } from '@/components/common/appShell';
 import { AboutIntro } from '@/sections/about/intro';
 import { Card } from '@/components/ui/card';
 

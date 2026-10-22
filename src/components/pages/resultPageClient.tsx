@@ -5,15 +5,15 @@ import { ArrowRight, BookmarkPlus } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { testsData } from '@/data/tests';
 import { ResultsIntro } from '@/sections/results/intro';
-import { ResultSummaryCard } from '@/components/results/result-summary-card';
-import { ScoreChart } from '@/components/results/score-chart';
-import { InsightCard } from '@/components/results/insight-card';
-import { CrisisResourceCard } from '@/components/results/crisis-resource-card';
-import { DomainBreakdownCard } from '@/components/results/domain-breakdown-card';
+import { ResultSummaryCard } from '@/components/results/resultSummaryCard';
+import { ScoreChart } from '@/components/results/scoreChart';
+import { InsightCard } from '@/components/results/insightCard';
+import { CrisisResourceCard } from '@/components/results/crisisResourceCard';
+import { DomainBreakdownCard } from '@/components/results/domainBreakdownCard';
 import { Button } from '@/components/ui/button';
 import { routes } from '@/config/routes';
-import { useResults } from '@/hooks/use-results';
-import { usePersonalData } from '@/hooks/use-personal-data';
+import { useResults } from '@/hooks/useResults';
+import { usePersonalData } from '@/hooks/usePersonalData';
 
 export function ResultPageClient({ resultId }: { resultId: string }) {
   const result = useResults(resultId);

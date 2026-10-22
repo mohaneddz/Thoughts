@@ -2,15 +2,15 @@
 
 import { useRef, useState } from 'react';
 import { Check, Download, Trash2, Upload } from 'lucide-react';
-import { AppShell } from '@/components/common/app-shell';
+import { AppShell } from '@/components/common/appShell';
 import { Avatar } from '@/components/common/avatar';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { useProfile } from '@/hooks/use-profile';
-import { usePersonalData } from '@/hooks/use-personal-data';
+import { useProfile } from '@/hooks/useProfile';
+import { usePersonalData } from '@/hooks/usePersonalData';
 import { accentOptions, avatarEmojiOptions, clearProfile, fileToAvatarDataUrl } from '@/utils/storage/profile';
-import { clearPersonalData } from '@/utils/storage/personal-data';
+import { clearPersonalData } from '@/utils/storage/personalData';
 import { cn } from '@/utils/cn';
 
 export default function ProfilePage() {

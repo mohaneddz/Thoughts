@@ -1,10 +1,10 @@
 'use client';
 
-import { AppShell } from '@/components/common/app-shell';
-import { CheckInForm, type CheckInValues } from '@/components/forms/check-in-form';
+import { AppShell } from '@/components/common/appShell';
+import { CheckInForm, type CheckInValues } from '@/components/forms/checkInForm';
 import { Card } from '@/components/ui/card';
 import { useState } from 'react';
-import { usePersonalData } from '@/hooks/use-personal-data';
+import { usePersonalData } from '@/hooks/usePersonalData';
 
 export default function CheckInPage() {
   const { saveCheckIn } = usePersonalData();

@@ -1,7 +1,7 @@
 import { Navbar } from '@/layout/navbar';
 import { Footer } from '@/layout/footer';
-import { MobileNav } from '@/layout/mobile-nav';
-import { AppBackground } from '@/components/common/app-background';
+import { MobileNav } from '@/layout/mobileNav';
+import { AppBackground } from '@/components/common/appBackground';
 import { cn } from '@/utils/cn';
 import type { ReactNode } from 'react';
 

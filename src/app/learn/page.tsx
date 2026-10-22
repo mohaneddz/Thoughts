@@ -1,6 +1,6 @@
-import { AppShell } from '@/components/common/app-shell';
+import { AppShell } from '@/components/common/appShell';
 import { learnData } from '@/data/learn';
-import { LearnArticleCard } from '@/components/common/learn-article-card';
+import { LearnArticleCard } from '@/components/common/learnArticleCard';
 
 export default function LearnPage() {
   return (

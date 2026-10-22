@@ -1,4 +1,4 @@
-import { InsightCard } from '@/components/results/insight-card';
+import { InsightCard } from '@/components/results/insightCard';
 
 export function HowItWorks() {
   return (

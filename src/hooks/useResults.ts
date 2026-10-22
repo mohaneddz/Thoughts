@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 import { sampleResult } from '@/data/tests';
-import { usePersonalData } from '@/hooks/use-personal-data';
+import { usePersonalData } from '@/hooks/usePersonalData';
 
 export function useResults(resultId?: string) {
   const { results } = usePersonalData();

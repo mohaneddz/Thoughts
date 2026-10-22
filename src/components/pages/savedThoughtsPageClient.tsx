@@ -1,8 +1,8 @@
 'use client';
 
-import { SavedThoughtCard } from '@/components/common/saved-thought-card';
-import { EmptyState } from '@/components/common/empty-state';
-import { usePersonalData } from '@/hooks/use-personal-data';
+import { SavedThoughtCard } from '@/components/common/savedThoughtCard';
+import { EmptyState } from '@/components/common/emptyState';
+import { usePersonalData } from '@/hooks/usePersonalData';
 
 export function SavedThoughtsPageClient() {
   const { savedThoughts } = usePersonalData();

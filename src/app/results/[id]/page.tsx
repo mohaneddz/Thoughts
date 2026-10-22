@@ -1,5 +1,5 @@
-import { AppShell } from '@/components/common/app-shell';
-import { ResultPageClient } from '@/components/pages/result-page-client';
+import { AppShell } from '@/components/common/appShell';
+import { ResultPageClient } from '@/components/pages/resultPageClient';
 
 export default async function ResultPage({
   params,

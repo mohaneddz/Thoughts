@@ -1,14 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { useAIInterpretation } from '@/hooks/use-ai-interpretation';
+import { useAIInterpretation } from '@/hooks/useAiInterpretation';
 import type { AIInterpretationMode } from '@/types/result';
-import { ModeSelector } from '@/components/ai/mode-selector';
-import { AIChatBox } from '@/components/ai/ai-chat-box';
+import { ModeSelector } from '@/components/ai/modeSelector';
+import { AIChatBox } from '@/components/ai/aiChatBox';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { useResults } from '@/hooks/use-results';
-import { usePersonalData } from '@/hooks/use-personal-data';
+import { useResults } from '@/hooks/useResults';
+import { usePersonalData } from '@/hooks/usePersonalData';
 
 const modes: Array<{ id: AIInterpretationMode; title: string; description: string }> = [
   { id: 'gentle-explanation', title: 'Gentle explanation', description: 'A soft, clear breakdown of your results.' },

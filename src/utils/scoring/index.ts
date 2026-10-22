@@ -2,7 +2,7 @@ import type { AnswerValue } from '@/types/common';
 import type { ScoringDomain, TestDefinition, TestQuestion, TestScoreBreakdown } from '@/types/test';
 import type { CrisisSignal, TestResultSummary } from '@/types/result';
 import { sampleResult } from '@/data/tests';
-import { crisisCopy } from '@/data/crisis-resources';
+import { crisisCopy } from '@/data/crisisResources';
 
 function readRawScore(question: TestQuestion, rawValue: AnswerValue): number {
   if (rawValue == null) return 0;

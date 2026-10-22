@@ -1,6 +1,6 @@
-import { AppShell } from '@/components/common/app-shell';
+import { AppShell } from '@/components/common/appShell';
 import { collectionsData } from '@/data/collections';
-import { CollectionCard } from '@/components/common/collection-card';
+import { CollectionCard } from '@/components/common/collectionCard';
 
 export default function CollectionsPage() {
   return (

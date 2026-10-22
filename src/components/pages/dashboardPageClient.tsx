@@ -1,8 +1,8 @@
 'use client';
 
-import { EmptyState } from '@/components/common/empty-state';
-import { TrendCard } from '@/components/dashboard/trend-card';
-import { usePersonalData } from '@/hooks/use-personal-data';
+import { EmptyState } from '@/components/common/emptyState';
+import { TrendCard } from '@/components/dashboard/trendCard';
+import { usePersonalData } from '@/hooks/usePersonalData';
 import { DashboardIntro } from '@/sections/dashboard/intro';
 import { Card } from '@/components/ui/card';
 

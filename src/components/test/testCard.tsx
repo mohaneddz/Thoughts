@@ -7,7 +7,7 @@ import { ArrowRight, Files, Layers3, TriangleAlert, X } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { routes } from '@/config/routes';
-import { imageForTest } from '@/components/test/test-image';
+import { imageForTest } from '@/components/test/testImage';
 import type { TestCatalogEntry } from '@/utils/tests/catalog';
 import type { TestDefinition } from '@/types/test';
 

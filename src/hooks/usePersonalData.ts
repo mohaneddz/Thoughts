@@ -11,7 +11,7 @@ import {
   readPersonalData,
   subscribeToPersonalData,
   writePersonalData,
-} from '@/utils/storage/personal-data';
+} from '@/utils/storage/personalData';
 
 function sortByDateDesc<T extends { createdAt?: string; updatedAt?: string }>(items: T[]) {
   return [...items].sort((left, right) => {

@@ -1,6 +1,6 @@
 import { TriangleAlert } from 'lucide-react';
 import { Card } from '@/components/ui/card';
-import { crisisResources, crisisCopy } from '@/data/crisis-resources';
+import { crisisResources, crisisCopy } from '@/data/crisisResources';
 import type { CrisisSignal } from '@/types/result';
 
 export function CrisisResourceCard({ signal }: { signal: CrisisSignal }) {

@@ -1,5 +1,5 @@
-import { AppShell } from '@/components/common/app-shell';
-import { reflectionToolsData } from '@/data/reflection-tools';
+import { AppShell } from '@/components/common/appShell';
+import { reflectionToolsData } from '@/data/reflectionTools';
 import { Card } from '@/components/ui/card';
 
 export default function ReflectionToolsPage() {

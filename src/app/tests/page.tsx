@@ -1,5 +1,5 @@
-import { AppShell } from '@/components/common/app-shell';
-import { TestsLibraryPage } from '@/components/pages/tests-library-page';
+import { AppShell } from '@/components/common/appShell';
+import { TestsLibraryPage } from '@/components/pages/testsLibraryPage';
 
 export default function TestsPage() {
   return (

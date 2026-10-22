@@ -1,5 +1,5 @@
-import { AppShell } from '@/components/common/app-shell';
-import { SavedThoughtsPageClient } from '@/components/pages/saved-thoughts-page-client';
+import { AppShell } from '@/components/common/appShell';
+import { SavedThoughtsPageClient } from '@/components/pages/savedThoughtsPageClient';
 
 export default function SavedThoughtsPage() {
   return (
