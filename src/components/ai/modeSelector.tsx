@@ -13,10 +13,12 @@ export function ModeSelector({
   onChange: (mode: AIInterpretationMode) => void;
 }) {
   return (
-    <div className='grid gap-3 md:grid-cols-2 lg:grid-cols-4'>
+    <div className='grid gap-3 md:grid-cols-2 lg:grid-cols-3'>
       {modes.map((mode) => (
         <button
           key={mode.id}
+          type='button'
+          aria-pressed={active === mode.id}
           onClick={() => onChange(mode.id)}
           className={cn(
             'rounded-2xl border p-4 text-left transition',
