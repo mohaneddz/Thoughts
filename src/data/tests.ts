@@ -1,5 +1,4 @@
-import type { CheckInEntry, TestResultSummary } from '@/types/result';
-import type { ChoiceOption, TestDefinition, TestQuestion } from '@/types/test';
+import type { ChoiceOption, ScoringDomain, TestDefinition, TestQuestion } from '@/types/test';
 
 const agree5: ChoiceOption[] = [
   { value: 'strongly-disagree', label: 'Strongly disagree', score: 1 },
@@ -104,7 +103,7 @@ function makePendingLicensedTest(name: string): TestDefinition {
     id: `pending-${slug}`,
     slug,
     title: name,
-    description: 'Metadata prepared. Awaiting licensed item bank import for direct administration.',
+    description: 'Commercial instrument — not available in this app.',
     category: 'Personality',
     estimatedMinutes: 0,
     depth: 'quick',
@@ -112,10 +111,10 @@ function makePendingLicensedTest(name: string): TestDefinition {
     status: 'pending',
     riskLevel: 'high',
     tags: ['licensed', 'pending'],
-    sourceUrl: 'https://www.ipip.ori.org/',
-    licenseNote: 'Licensed instrument. Question payload intentionally omitted until verified content import.',
+    sourceUrl: '',
+    licenseNote: 'Commercial instrument. Not administered here until it can be properly licensed.',
     variantGroup,
-    scoring: { model: 'none' },
+    scoring: { model: 'none', higherIs: 'neutral' },
     questions: [],
   };
 }
@@ -127,6 +126,7 @@ function createOriginalQuestions(prefix: string, theme: string): TestQuestion[] 
       prompt: `In the last 2 weeks, ${theme} has impacted my day-to-day decisions.`,
       type: 'frequency',
       choices: freq4,
+      reverseScored: true,
       required: true,
     },
     {
@@ -143,13 +143,14 @@ function createOriginalQuestions(prefix: string, theme: string): TestQuestion[] 
     {
       id: `${prefix}-q3`,
       prompt: `Select all factors currently shaping your ${theme}.`,
+      helperText: 'Context only — this one is not scored.',
       type: 'multi-select',
       choices: [
-        { value: 'sleep', label: 'Sleep quality', score: 1 },
-        { value: 'work', label: 'Work or study pressure', score: 1 },
-        { value: 'relationships', label: 'Relationships', score: 1 },
-        { value: 'health', label: 'Physical health', score: 1 },
-        { value: 'money', label: 'Money stress', score: 1 },
+        { value: 'sleep', label: 'Sleep quality', score: 0 },
+        { value: 'work', label: 'Work or study pressure', score: 0 },
+        { value: 'relationships', label: 'Relationships', score: 0 },
+        { value: 'health', label: 'Physical health', score: 0 },
+        { value: 'money', label: 'Money stress', score: 0 },
       ],
       maxSelections: 3,
       required: true,
@@ -523,6 +524,52 @@ const ipipBigFive100Reverse = new Set([
   94, 95, 96, 97, 98, 99, 100,
 ]);
 
+const bigFiveLabels = ['Extraversion', 'Agreeableness', 'Conscientiousness', 'Emotional stability', 'Intellect / Imagination'];
+
+/** Both IPIP Big Five forms list their items domain by domain, `perDomain` items at a time. */
+function bigFiveDomains(prefix: string, perDomain: number): ScoringDomain[] {
+  return bigFiveLabels.map((label, domainIndex) => ({
+    id: label.toLowerCase().replace(/[^a-z]+/g, '_'),
+    label,
+    questionIds: Array.from({ length: perDomain }, (_, itemIndex) => `${prefix}-q${domainIndex * perDomain + itemIndex + 1}`),
+  }));
+}
+
+/** Reverse-keyed items in the IPIP-NEO-120 (Johnson, 2014), numbered as listed in `ipip120Prompts`. */
+const ipipNeo120Reverse = new Set([
+  8, 12, 16, 18, 19, 20, 24,
+  27, 28, 31, 32, 36, 40,
+  55, 56, 59, 60, 62, 63, 64, 66, 67, 68, 71, 72,
+  76, 77, 78, 79, 80, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 95, 96,
+  102, 103, 104, 107, 108, 111, 112, 115, 116, 117, 118, 119, 120,
+]);
+
+const ipipNeo120Facets: Array<{ domain: string; facets: string[] }> = [
+  { domain: 'Neuroticism', facets: ['Anxiety', 'Anger', 'Depression', 'Self-consciousness', 'Immoderation', 'Vulnerability'] },
+  { domain: 'Extraversion', facets: ['Friendliness', 'Gregariousness', 'Assertiveness', 'Activity level', 'Excitement-seeking', 'Cheerfulness'] },
+  { domain: 'Openness', facets: ['Imagination', 'Artistic interests', 'Emotionality', 'Adventurousness', 'Intellect', 'Liberalism'] },
+  { domain: 'Agreeableness', facets: ['Trust', 'Morality', 'Altruism', 'Cooperation', 'Modesty', 'Sympathy'] },
+  { domain: 'Conscientiousness', facets: ['Self-efficacy', 'Orderliness', 'Dutifulness', 'Achievement-striving', 'Self-discipline', 'Cautiousness'] },
+];
+
+const ipipNeo120Domains: ScoringDomain[] = ipipNeo120Facets.flatMap(({ domain, facets }, domainIndex) => {
+  const domainId = domain.toLowerCase();
+  const facetDomains = facets.map((facet, facetIndex) => {
+    const first = domainIndex * 24 + facetIndex * 4 + 1;
+    return {
+      id: `${domainId}_${facet.toLowerCase().replace(/[^a-z]+/g, '_')}`,
+      label: facet,
+      parentId: domainId,
+      questionIds: [0, 1, 2, 3].map((offset) => `ipip120-q${first + offset}`),
+    };
+  });
+
+  return [
+    { id: domainId, label: domain, questionIds: facetDomains.flatMap((facet) => facet.questionIds) },
+    ...facetDomains,
+  ];
+});
+
 const dass42Prompts = [
   'I found myself getting upset by quite trivial things',
   'I was aware of dryness of my mouth',
@@ -761,7 +808,7 @@ export const testsData: TestDefinition[] = [
     licenseNote: 'IPIP items and scales are public domain.',
     variantGroup: 'ipip-big-five',
     variantKey: '50',
-    scoring: { model: 'sum-with-severity', minScore: 50, maxScore: 250 },
+    scoring: { model: 'domain-sum', higherIs: 'neutral', domains: bigFiveDomains('ipip50', 10) },
     questions: ipipBigFive50Prompts.map((prompt, index) => ({
       id: `ipip50-q${index + 1}`,
       prompt,
@@ -787,7 +834,7 @@ export const testsData: TestDefinition[] = [
     licenseNote: 'IPIP items and scales are public domain.',
     variantGroup: 'ipip-big-five',
     variantKey: '100',
-    scoring: { model: 'sum-with-severity', minScore: 100, maxScore: 500 },
+    scoring: { model: 'domain-sum', higherIs: 'neutral', domains: bigFiveDomains('ipip100', 20) },
     questions: ipipBigFive100Prompts.map((prompt, index) => ({
       id: `ipip100-q${index + 1}`,
       prompt,
@@ -813,12 +860,13 @@ export const testsData: TestDefinition[] = [
     licenseNote: 'IPIP items and scales are public domain.',
     variantGroup: 'ipip-neo',
     variantKey: '120',
-    scoring: { model: 'sum-with-severity', minScore: 120, maxScore: 600 },
+    scoring: { model: 'domain-sum', higherIs: 'neutral', domains: ipipNeo120Domains },
     questions: ipip120Prompts.map((prompt, index) => ({
       id: `ipip120-q${index + 1}`,
       prompt,
       type: 'likert',
       choices: agree5,
+      reverseScored: ipipNeo120Reverse.has(index + 1),
       required: true,
     })),
   },
@@ -826,7 +874,7 @@ export const testsData: TestDefinition[] = [
     id: 'ipip-neo-300',
     slug: 'ipip-neo-300',
     title: 'IPIP-NEO (300-item)',
-    description: 'Extended variant; metadata ready, full item payload pending authoritative import.',
+    description: 'Full 300-item IPIP-NEO. Not available yet — use the 120-item version.',
     category: 'Personality',
     estimatedMinutes: 45,
     depth: 'deep',
@@ -834,11 +882,11 @@ export const testsData: TestDefinition[] = [
     status: 'pending',
     riskLevel: 'low',
     tags: ['open', 'ipip', 'neo', 'pending', 'variant-extended'],
-    sourceUrl: 'https://www.ipip.ori.org/KoreanIPIP-NEO-300.htm',
-    licenseNote: 'Pending reliable full English payload extraction from official source.',
+    sourceUrl: 'https://ipip.ori.org/newNEOKey.htm',
+    licenseNote: 'IPIP items and scales are public domain.',
     variantGroup: 'ipip-neo',
     variantKey: '300',
-    scoring: { model: 'none' },
+    scoring: { model: 'none', higherIs: 'neutral' },
     questions: [],
   },
   {
@@ -857,7 +905,15 @@ export const testsData: TestDefinition[] = [
     licenseNote: 'IPIP items and scales are public domain.',
     variantGroup: 'ipip-single-constructs',
     variantKey: 'curated-5x10',
-    scoring: { model: 'domain-sum', minScore: 50, maxScore: 250 },
+    scoring: {
+      model: 'domain-sum',
+      higherIs: 'neutral',
+      domains: ipipPersonalityScales.map((scale) => ({
+        id: scale.key,
+        label: scale.label,
+        questionIds: scale.items.map((_, index) => `${scale.key}-q${index + 1}`),
+      })),
+    },
     questions: ipipPersonalityScales.flatMap((scale) =>
       scale.items.map((item, index) => ({
         id: `${scale.key}-q${index + 1}`,
@@ -887,6 +943,7 @@ export const testsData: TestDefinition[] = [
     variantKey: '9',
     scoring: {
       model: 'sum-with-severity',
+      higherIs: 'worse',
       minScore: 0,
       maxScore: 27,
       cutoffBands: [
@@ -916,6 +973,7 @@ export const testsData: TestDefinition[] = [
     variantKey: '8',
     scoring: {
       model: 'sum-with-severity',
+      higherIs: 'worse',
       minScore: 0,
       maxScore: 24,
       cutoffBands: [
@@ -945,6 +1003,7 @@ export const testsData: TestDefinition[] = [
     variantKey: '2',
     scoring: {
       model: 'sum-with-severity',
+      higherIs: 'worse',
       minScore: 0,
       maxScore: 6,
       cutoffBands: [
@@ -971,6 +1030,7 @@ export const testsData: TestDefinition[] = [
     variantKey: '7',
     scoring: {
       model: 'sum-with-severity',
+      higherIs: 'worse',
       minScore: 0,
       maxScore: 21,
       cutoffBands: [
@@ -999,6 +1059,7 @@ export const testsData: TestDefinition[] = [
     variantKey: '2',
     scoring: {
       model: 'sum-with-severity',
+      higherIs: 'worse',
       minScore: 0,
       maxScore: 6,
       cutoffBands: [
@@ -1025,6 +1086,7 @@ export const testsData: TestDefinition[] = [
     variantKey: '21',
     scoring: {
       model: 'domain-sum',
+      higherIs: 'worse',
       minScore: 0,
       maxScore: 63,
       domains: [
@@ -1052,6 +1114,7 @@ export const testsData: TestDefinition[] = [
     variantKey: '42',
     scoring: {
       model: 'domain-sum',
+      higherIs: 'worse',
       minScore: 0,
       maxScore: 126,
       domains: [
@@ -1076,7 +1139,17 @@ export const testsData: TestDefinition[] = [
     tags: ['caution', 'licensed', 'stress'],
     sourceUrl: 'https://www.mindgarden.com/documents/PerceivedStressScale.pdf',
     licenseNote: 'PSS is copyrighted; confirm permission terms for your usage context.',
-    scoring: { model: 'sum-with-severity', minScore: 0, maxScore: 40 },
+    scoring: {
+      model: 'sum-with-severity',
+      higherIs: 'worse',
+      minScore: 0,
+      maxScore: 40,
+      cutoffBands: [
+        { label: 'Low perceived stress', min: 0, max: 13, description: 'life has felt mostly manageable over the last month' },
+        { label: 'Moderate perceived stress', min: 14, max: 26, description: 'a noticeable amount of strain over the last month' },
+        { label: 'High perceived stress', min: 27, max: 40, description: 'life has often felt unpredictable or overloaded over the last month' },
+      ],
+    },
     questions: makeFrequencyQuestions('pss10', pss10Prompts).map((q, idx) => ({
       ...q,
       reverseScored: [3, 4, 6, 7].includes(idx),
@@ -1102,7 +1175,17 @@ export const testsData: TestDefinition[] = [
     riskLevel: 'low',
     tags: ['open', 'self-esteem', 'public-domain'],
     sourceUrl: 'https://socy.umd.edu/about-us/rosenberg-self-esteem-scale',
-    scoring: { model: 'sum-with-severity', minScore: 0, maxScore: 30 },
+    scoring: {
+      model: 'sum-with-severity',
+      higherIs: 'better',
+      minScore: 0,
+      maxScore: 30,
+      cutoffBands: [
+        { label: 'Lower self-esteem range', min: 0, max: 14, description: 'a more critical view of yourself (scores under 15 are commonly read as low self-esteem)' },
+        { label: 'Typical self-esteem range', min: 15, max: 25, description: 'a generally balanced view of yourself, where most people land' },
+        { label: 'High self-esteem range', min: 26, max: 30, description: 'a consistently positive view of yourself' },
+      ],
+    },
     questions: [
       { id: 'rse-q1', prompt: 'On the whole, I am satisfied with myself.', type: 'single-choice', choices: rosenbergChoices, required: true },
       { id: 'rse-q2', prompt: 'At times, I think I am no good at all.', type: 'single-choice', choices: rosenbergChoices, reverseScored: true, required: true },
@@ -1131,6 +1214,7 @@ export const testsData: TestDefinition[] = [
     sourceUrl: 'https://www.who.int/publications/m/item/WHO-UCN-MSD-MHE-2024.01',
     scoring: {
       model: 'sum-with-severity',
+      higherIs: 'better',
       minScore: 0,
       maxScore: 25,
       cutoffBands: [
@@ -1164,6 +1248,7 @@ export const testsData: TestDefinition[] = [
     variantKey: '10',
     scoring: {
       model: 'sum-with-severity',
+      higherIs: 'worse',
       minScore: 0,
       maxScore: 40,
       cutoffBands: [
@@ -1259,6 +1344,7 @@ export const testsData: TestDefinition[] = [
     variantKey: 'c',
     scoring: {
       model: 'sum-with-severity',
+      higherIs: 'worse',
       minScore: 0,
       maxScore: 12,
       cutoffBands: [
@@ -1305,6 +1391,7 @@ export const testsData: TestDefinition[] = [
     sourceUrl: 'https://ptsd.va.gov/PTSD/professional/assessment/documents/using-PCL5.pdf',
     scoring: {
       model: 'sum-with-severity',
+      higherIs: 'worse',
       minScore: 0,
       maxScore: 80,
       cutoffBands: [
@@ -1345,7 +1432,16 @@ export const testsData: TestDefinition[] = [
     riskLevel: 'high',
     tags: ['caution', 'suicide-risk', 'clinical-screener'],
     sourceUrl: 'https://cssrs.columbia.edu/the-columbia-scale-c-ssrs/cssrs-for-research/',
-    scoring: { model: 'sum-with-severity', minScore: 0, maxScore: 6 },
+    scoring: {
+      model: 'sum-with-severity',
+      higherIs: 'worse',
+      minScore: 0,
+      maxScore: 6,
+      cutoffBands: [
+        { label: 'No ideation or behavior reported', min: 0, max: 0, description: 'no reported thoughts of suicide or related behavior' },
+        { label: 'Ideation or behavior reported', min: 1, max: 6 },
+      ],
+    },
     questions: [
       { id: 'cssrs-q1', prompt: 'Have you wished you were dead or wished you could go to sleep and not wake up?', type: 'yes-no', choices: yesNo, required: true },
       { id: 'cssrs-q2', prompt: 'Have you actually had any thoughts about killing yourself?', type: 'yes-no', choices: yesNo, required: true },
@@ -1359,7 +1455,7 @@ export const testsData: TestDefinition[] = [
     id: 'mdq',
     slug: 'mdq',
     title: 'MDQ Mood Disorder Questionnaire',
-    description: 'Bipolar-spectrum screener (licensed + caution handling).',
+    description: '13-item screener for past periods of elevated or irritable mood.',
     category: 'Emotions',
     estimatedMinutes: 6,
     depth: 'medium',
@@ -1371,6 +1467,7 @@ export const testsData: TestDefinition[] = [
     licenseNote: 'MDQ content is copyrighted; use according to holder terms and local policy.',
     scoring: {
       model: 'algorithmic',
+      higherIs: 'worse',
       minScore: 0,
       maxScore: 13,
       notes: 'Common positive screen rule: 7 or more symptom yes responses + same-period endorsement + moderate/serious impairment.',
@@ -1418,73 +1515,8 @@ export const testsData: TestDefinition[] = [
     tags: ['original', 'non-clinical'],
     sourceUrl: '#original',
     licenseNote: 'Original in-app authoring; not derived from any external instrument.',
-    scoring: { model: 'sum-with-severity', minScore: 0, maxScore: 20 },
+    scoring: { model: 'sum-with-severity', higherIs: 'better' },
     questions: createOriginalQuestions(item.slug.replace(/[^a-z0-9]/g, ''), item.theme),
   })),
   ...notOkayDirectly.map((name) => makePendingLicensedTest(name)),
-];
-
-export const sampleResult: TestResultSummary = {
-  id: 'r1',
-  userId: 'u1',
-  testId: 'orig-5',
-  testTitle: 'Emotional awareness test',
-  score: 72,
-  pattern: 'Balanced',
-  strengths: ['Reflective', 'Growth-Oriented', 'Values-Led'],
-  growthAreas: ['Overthinking', 'Consistency', 'Boundaries'],
-  meaning:
-    "You're someone who cares deeply and thinks things through. You're building something meaningful through small, repeated choices.",
-  nonMeaning: [
-    "It doesn't define your worth.",
-    "It's not a label.",
-    "It's a snapshot, not the whole story.",
-  ],
-  createdAt: new Date().toISOString(),
-  keyPatterns: [
-    { label: 'Self-Awareness', value: 78 },
-    { label: 'Emotional Balance', value: 69 },
-    { label: 'Purpose & Values', value: 74 },
-    { label: 'Relationships', value: 63 },
-    { label: 'Mindset', value: 75 },
-  ],
-};
-
-export const sampleCheckIns: CheckInEntry[] = [
-  {
-    id: 'c1',
-    mood: 7,
-    stress: 4,
-    energy: 6,
-    sleep: 6,
-    focus: 7,
-    motivation: 7,
-    socialBattery: 5,
-    note: 'Felt calmer after a short walk.',
-    createdAt: '2026-05-01T08:10:00.000Z',
-  },
-  {
-    id: 'c2',
-    mood: 6,
-    stress: 6,
-    energy: 5,
-    sleep: 5,
-    focus: 5,
-    motivation: 6,
-    socialBattery: 4,
-    note: 'Too many tabs open mentally.',
-    createdAt: '2026-05-02T08:10:00.000Z',
-  },
-  {
-    id: 'c3',
-    mood: 8,
-    stress: 3,
-    energy: 7,
-    sleep: 7,
-    focus: 7,
-    motivation: 8,
-    socialBattery: 6,
-    note: 'Good pace today and fewer interruptions.',
-    createdAt: '2026-05-03T08:10:00.000Z',
-  },
 ];
