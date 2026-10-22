@@ -4,11 +4,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, ArrowRight, ShieldAlert, TriangleAlert } from 'lucide-react';
-import { testsData } from '@/data/tests';
 import { QuestionCard } from '@/components/test/questionCard';
-import { LikertScale } from '@/components/test/likertScale';
-import { SingleChoiceQuestion } from '@/components/test/singleChoiceQuestion';
-import { MultiSelectQuestion } from '@/components/test/multiSelectQuestion';
+import { ChoiceList } from '@/components/test/choiceList';
 import { NumericScaleQuestion } from '@/components/test/numericScaleQuestion';
 import { TestBackgroundField } from '@/components/test/testBackgroundField';
 import { imageForTest } from '@/components/test/testImage';
@@ -21,7 +18,7 @@ import { usePersonalData } from '@/hooks/usePersonalData';
 import { routes } from '@/config/routes';
 import { scoreTestForDefinition, toResultSummaryFromBreakdown } from '@/utils/scoring';
 import { crisisResources } from '@/data/crisisResources';
-import type { TestQuestion } from '@/types/test';
+import type { TestDefinition, TestQuestion } from '@/types/test';
 import type { AnswerValue } from '@/types/common';
 
 type TestMode = 'full' | 'guided';
@@ -80,27 +77,22 @@ function QuestionInput({
     <>
       {question.helperText ? <p className='text-sm text-[var(--color-muted)]'>{question.helperText}</p> : null}
 
-      {(question.type === 'likert' || question.type === 'frequency') && question.choices ? (
-        <LikertScale
+      {question.choices && question.type !== 'multi-select' ? (
+        <ChoiceList
+          label={question.prompt}
           options={question.choices}
-          selected={typeof answer === 'string' ? answer : undefined}
-          onSelect={onAnswer}
-        />
-      ) : null}
-
-      {(question.type === 'single-choice' || question.type === 'yes-no' || question.type === 'true-false') && question.choices ? (
-        <SingleChoiceQuestion
-          options={question.choices}
-          selected={typeof answer === 'string' ? answer : undefined}
+          selected={typeof answer === 'string' ? [answer] : []}
           onSelect={onAnswer}
         />
       ) : null}
 
       {question.type === 'multi-select' && question.choices ? (
-        <MultiSelectQuestion
+        <ChoiceList
+          multiple
+          label={question.prompt}
           options={question.choices}
           selected={Array.isArray(answer) ? (answer as string[]) : []}
-          onToggle={onToggleMulti}
+          onSelect={onToggleMulti}
         />
       ) : null}
 
@@ -126,10 +118,9 @@ function QuestionInput({
   );
 }
 
-export function TestRunnerPage({ slug }: { slug: string }) {
+export function TestRunnerPage({ test }: { test: TestDefinition }) {
   const router = useRouter();
-  const test = useMemo(() => testsData.find((item) => item.slug === slug) || testsData[0], [slug]);
-  const { drafts, saveDraft, clearDraft, saveResult } = usePersonalData();
+  const { drafts, isReady, saveDraft, clearDraft, saveResult } = usePersonalData();
   const draft = useMemo(() => drafts.find((item) => item.slug === test.slug), [drafts, test.slug]);
   const hasRestoredDraftRef = useRef(false);
   const hasEnabledAutosaveRef = useRef(false);
@@ -195,7 +186,7 @@ export function TestRunnerPage({ slug }: { slug: string }) {
   };
 
   useEffect(() => {
-    if (hasRestoredDraftRef.current) {
+    if (!isReady || hasRestoredDraftRef.current) {
       return;
     }
 
@@ -211,7 +202,7 @@ export function TestRunnerPage({ slug }: { slug: string }) {
     }, 0);
 
     return () => window.clearTimeout(timer);
-  }, [draft]);
+  }, [draft, isReady]);
 
   useEffect(() => {
     if (!isDraftReady) {
@@ -370,6 +361,14 @@ export function TestRunnerPage({ slug }: { slug: string }) {
                 </Button>
               </div>
               {savedMessage ? <p className='text-sm text-[var(--color-muted)]'>{savedMessage}</p> : null}
+              {mode === 'guided' ? (
+                <div className='space-y-1.5'>
+                  <p className='text-xs font-semibold uppercase tracking-[0.16em] text-[var(--color-muted)]'>
+                    Question {safeIndex + 1} of {visibleQuestions.length}
+                  </p>
+                  <Progress value={guidedProgress} />
+                </div>
+              ) : null}
 
               {mode === 'guided' ? (
                 <QuestionCard title={current.prompt}>
@@ -429,7 +428,7 @@ export function TestRunnerPage({ slug }: { slug: string }) {
           )}
 
           <p className='text-center text-xs text-[var(--color-muted)]'>
-            Progress stays on this device unless you create an account later.
+            Answers are saved as a draft on this device as you go, and never leave it.
           </p>
         </div>
       </div>
