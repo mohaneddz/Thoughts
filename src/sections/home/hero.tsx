@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import Link from 'next/link';
 import { routes } from '@/config/routes';
+import { LatestResultTile } from '@/sections/home/latestResultTile';
 
 export function HomeHero() {
   return (
@@ -32,7 +33,7 @@ export function HomeHero() {
           </div>
           <div className='rounded-[1.4rem] border border-[var(--color-border)] bg-[var(--color-surface)] p-4'>
             <p className='text-sm font-semibold text-[var(--color-text-strong)]'>Private by default</p>
-            <p className='mt-1 text-sm text-[var(--color-muted)]'>Progress can stay on your device.</p>
+            <p className='mt-1 text-sm text-[var(--color-muted)]'>Everything stays in this browser.</p>
           </div>
         </div>
       </div>
@@ -43,13 +44,7 @@ export function HomeHero() {
           <div className='absolute inset-0 bg-[linear-gradient(140deg,rgba(245,248,251,0.14),rgba(8,15,24,0.38)_65%)]' />
         </div>
         <div className='grid gap-3 sm:grid-cols-[1fr_0.9fr]'>
-          <div className='rounded-[1.5rem] border border-[var(--color-border)] bg-[var(--color-surface)] p-5'>
-            <p className='text-sm text-[var(--color-muted)]'>Latest result</p>
-            <h2 className='mt-2 font-heading text-3xl text-[var(--color-text-strong)]'>Mostly steady</h2>
-            <p className='mt-2 text-sm leading-6 text-[var(--color-muted)]'>
-              You are not starting from zero. The stronger signal is consistency under pressure, not more intensity.
-            </p>
-          </div>
+          <LatestResultTile />
           <div className='rounded-[1.5rem] border border-[var(--color-border)] bg-[var(--color-surface)] p-5'>
             <p className='text-sm text-[var(--color-muted)]'>Next useful move</p>
             <p className='mt-3 text-lg font-semibold text-[var(--color-text-strong)]'>Save one insight, not ten.</p>
