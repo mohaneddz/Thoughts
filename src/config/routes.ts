@@ -9,6 +9,7 @@ export const routes = {
   checkIn: '/check-in',
   dashboard: '/dashboard',
   reflectionTools: '/reflection-tools',
+  tool: (id: string) => `/reflection-tools/${id}`,
   collections: '/collections',
   learn: '/learn',
   savedThoughts: '/saved-thoughts',
