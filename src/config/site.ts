@@ -2,6 +2,7 @@ import { routes } from '@/config/routes';
 
 export const siteConfig = {
   name: 'Happy Healthy Human',
+  url: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:27384',
   title: 'Happy Healthy Human | Self-reflection tools',
   description:
     'Self-reflection tools, not diagnosis. Understand patterns and grow intentionally.',

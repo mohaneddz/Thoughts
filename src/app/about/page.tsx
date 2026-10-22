@@ -1,6 +1,9 @@
+import type { Metadata } from 'next';
 import { AppShell } from '@/components/common/appShell';
 import { AboutIntro } from '@/sections/about/intro';
 import { Card } from '@/components/ui/card';
+
+export const metadata: Metadata = { title: 'About' };
 
 export default function AboutPage() {
   return (

@@ -1,6 +1,9 @@
+import type { Metadata } from 'next';
 import { AppShell } from '@/components/common/appShell';
 import { collectionsData } from '@/data/collections';
 import { CollectionCard } from '@/components/common/collectionCard';
+
+export const metadata: Metadata = { title: 'Collections' };
 
 export default function CollectionsPage() {
   return (

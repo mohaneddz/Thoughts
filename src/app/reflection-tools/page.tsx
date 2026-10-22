@@ -1,6 +1,9 @@
+import type { Metadata } from 'next';
 import { AppShell } from '@/components/common/appShell';
 import { reflectionToolsData } from '@/data/reflectionTools';
 import { Card } from '@/components/ui/card';
+
+export const metadata: Metadata = { title: 'Reflection tools' };
 
 export default function ReflectionToolsPage() {
   return (
