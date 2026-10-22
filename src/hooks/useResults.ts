@@ -1,15 +1,15 @@
 'use client';
 
 import { useMemo } from 'react';
-import { sampleResult } from '@/data/tests';
 import { usePersonalData } from '@/hooks/usePersonalData';
 
-export function useResults(resultId?: string) {
-  const { results } = usePersonalData();
+export function useResult(resultId: string | undefined) {
+  const { results, isReady } = usePersonalData();
 
-  return useMemo(() => {
-    if (!resultId) return results[0] ?? sampleResult;
-    return results.find((item) => item.id === resultId) ?? { ...sampleResult, id: resultId };
-  }, [resultId, results]);
+  const result = useMemo(
+    () => (resultId ? results.find((item) => item.id === resultId) : results[0]),
+    [resultId, results],
+  );
+
+  return { result, isReady };
 }
-
