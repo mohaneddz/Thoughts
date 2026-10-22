@@ -1,31 +1,22 @@
 import { NextResponse } from 'next/server';
-import type { AIInterpretationMode, TestResultSummary } from '@/types/result';
-import { explainResultSimply, generateReflectionQuestions, interpretTestResult } from '@/utils/ai/groq';
-
-interface Payload {
-  mode: AIInterpretationMode;
-  result: TestResultSummary;
-}
+import { interpretRequestSchema } from '@/utils/ai/context';
+import { AIUnavailableError, interpretResult } from '@/utils/ai/groq';
+import { readJsonBody } from '@/utils/ai/readJsonBody';
 
 export async function POST(request: Request) {
+  const body = await readJsonBody(request);
+  const parsed = interpretRequestSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json({ message: 'That request did not include a valid result to interpret.' }, { status: 400 });
+  }
+
   try {
-    const body = (await request.json()) as Payload;
-
-    let message = '';
-    if (body.mode === 'explain-simply') {
-      message = await explainResultSimply(body.result);
-    } else if (body.mode === 'journal-prompts') {
-      message = await generateReflectionQuestions(body.result);
-    } else {
-      message = await interpretTestResult(body.result, body.mode);
-    }
-
+    const message = await interpretResult(parsed.data.context, parsed.data.mode);
     return NextResponse.json({ message });
-  } catch {
-    return NextResponse.json(
-      { message: 'I could not interpret this result right now. Please try again.' },
-      { status: 500 },
-    );
+  } catch (error) {
+    if (error instanceof AIUnavailableError) {
+      return NextResponse.json({ message: error.message }, { status: 503 });
+    }
+    return NextResponse.json({ message: 'The AI service did not answer in time. Try again in a moment.' }, { status: 502 });
   }
 }
-
