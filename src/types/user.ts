@@ -10,7 +10,7 @@ export interface SavedThought {
   userId: string;
   title: string;
   content: string;
-  sourceType: 'result' | 'ai' | 'note' | 'check-in';
+  sourceType: 'result' | 'ai' | 'note' | 'check-in' | 'tool';
   sourceId?: string;
   tags: string[];
   createdAt: string;
