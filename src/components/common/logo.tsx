@@ -13,7 +13,7 @@ export function Logo({ compact = false }: { compact?: boolean }) {
         className='h-7 w-7 rounded-sm object-contain'
         priority
       />
-      <span className={cn('font-heading text-2xl leading-none text-[var(--color-text-strong)]', compact && 'text-xl')}>
+      <span className={cn('whitespace-nowrap font-heading text-2xl leading-none max-sm:hidden lg:max-xl:hidden text-[var(--color-text-strong)]', compact && 'text-xl')}>
         Happy Healthy Human
       </span>
     </Link>

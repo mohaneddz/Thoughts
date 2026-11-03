@@ -35,6 +35,11 @@
   --color-scale-5: #a8473f;
 }
 
+:root[lang='ar'] {
+  --font-body: var(--font-arabic), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-arabic), var(--font-playfair), ui-serif, serif;
+}
+
 :root[data-theme='dark'] {
   --color-background: #121a20;
   --color-text: #d7dfdb;

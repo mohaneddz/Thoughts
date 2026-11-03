@@ -6,6 +6,7 @@ import { SearchInput } from '@/components/test/searchInput';
 import { TestCard } from '@/components/test/testCard';
 import { useTests } from '@/hooks/useTests';
 import { TestsIntro } from '@/sections/tests/intro';
+import { EnglishContentNotice } from '@/components/common/englishContentNotice';
 
 export function TestsLibraryPage() {
   const {
@@ -37,6 +38,7 @@ export function TestsLibraryPage() {
   return (
     <div className='space-y-8'>
       <TestsIntro />
+      <EnglishContentNotice />
 
       <div className='rounded-[2rem] border border-[var(--color-panel-border)] bg-[var(--color-panel)] p-5 shadow-[0_24px_65px_rgba(8,15,24,0.06)] md:p-6'>
         <div className='space-y-4'>
