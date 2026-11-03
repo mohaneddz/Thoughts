@@ -42,14 +42,6 @@ function normalizeVariantTitle(title: string): string {
   return title.replace(/\s*\([^)]*\)\s*$/, '').trim();
 }
 
-function formatVariantLabel(test: TestDefinition): string {
-  const parenthetical = test.title.match(/\(([^)]+)\)/)?.[1]?.trim();
-
-  if (parenthetical) return parenthetical;
-  if (test.variantKey) return test.variantKey;
-  return `${test.questions.length} prompts`;
-}
-
 function deriveGroupTitle(variants: TestDefinition[]): string {
   const primary = pickDefaultVariant(variants);
   const normalized = variants.map((item) => normalizeVariantTitle(item.title));

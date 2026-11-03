@@ -12,6 +12,8 @@ export type QuestionType =
   | 'long-text'
   | 'reflection';
 
+export type ScoreDirection = 'better' | 'worse' | 'neutral';
+
 export type TestStatus = 'active' | 'licensed' | 'caution' | 'pending';
 export type TestRiskLevel = 'low' | 'medium' | 'high';
 
@@ -65,6 +67,8 @@ export interface ScoringDomain {
   questionIds: string[];
   multiplier?: number;
   cutoffBands?: SeverityBand[];
+  /** Facets point at the broad domain they belong to, so results can nest them. */
+  parentId?: string;
 }
 
 export interface TestScoringConfig {
@@ -75,6 +79,8 @@ export interface TestScoringConfig {
     | 'algorithmic'
     | 'external'
     | 'none';
+  /** What a higher total means for the person: drives result copy so a high stress score never reads as good news. */
+  higherIs: ScoreDirection;
   minScore?: number;
   maxScore?: number;
   cutoffBands?: SeverityBand[];
@@ -109,8 +115,21 @@ export interface TestAnswer {
 
 export interface TestScoreBreakdown {
   totalScore: number;
+  minScore: number;
   maxScore: number;
   normalizedScore: number;
   band?: SeverityBand;
-  domains?: Array<{ id: string; label: string; score: number; maxScore: number; band?: SeverityBand }>;
+  domains?: DomainScore[];
+}
+
+export interface DomainScore {
+  id: string;
+  label: string;
+  score: number;
+  minScore: number;
+  maxScore: number;
+  /** 0-100 position between the domain's lowest and highest possible score. */
+  percent: number;
+  band?: SeverityBand;
+  parentId?: string;
 }

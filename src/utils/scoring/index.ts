@@ -1,8 +1,7 @@
 import type { AnswerValue } from '@/types/common';
-import type { ScoringDomain, TestDefinition, TestQuestion, TestScoreBreakdown } from '@/types/test';
+import type { DomainScore, ScoringDomain, SeverityBand, TestDefinition, TestQuestion, TestScoreBreakdown } from '@/types/test';
 import type { CrisisSignal, TestResultSummary } from '@/types/result';
-import { sampleResult } from '@/data/tests';
-import { crisisCopy } from '@/data/crisis-resources';
+import { crisisCopy } from '@/data/crisisResources';
 
 function readRawScore(question: TestQuestion, rawValue: AnswerValue): number {
   if (rawValue == null) return 0;
@@ -31,110 +30,114 @@ function readRawScore(question: TestQuestion, rawValue: AnswerValue): number {
   return scoreFromValue(rawValue);
 }
 
-function applyReverseIfNeeded(question: TestQuestion, score: number): number {
-  if (!question.reverseScored || !question.choices?.length) return score;
-  const values = question.choices.map((choice) => choice.score ?? 0);
-  const min = Math.min(...values);
-  const max = Math.max(...values);
-  return min + max - score;
+function choiceScoreRange(question: TestQuestion): [number, number] {
+  const values = question.choices?.map((choice) => choice.score ?? 0) ?? [0];
+  return [Math.min(...values), Math.max(...values)];
 }
 
 function readQuestionScore(question: TestQuestion, rawValue: AnswerValue): number {
   const rawScore = readRawScore(question, rawValue);
-  return applyReverseIfNeeded(question, rawScore);
+  if (!question.reverseScored || !question.choices?.length) return rawScore;
+  const [min, max] = choiceScoreRange(question);
+  return min + max - rawScore;
 }
 
-function resolveBand(test: TestDefinition, score: number) {
-  return test.scoring.cutoffBands?.find((band) => score >= band.min && score <= band.max);
-}
-
-function resolveDomainBand(domain: ScoringDomain, score: number) {
-  return domain.cutoffBands?.find((band) => score >= band.min && score <= band.max);
-}
-
-function computeMaxScore(test: TestDefinition): number {
-  if (typeof test.scoring.maxScore === 'number') {
-    return test.scoring.maxScore;
+/** Lowest and highest score a single question can contribute. */
+function questionScoreRange(question: TestQuestion): [number, number] {
+  if (question.type === 'numeric-scale') {
+    return [question.minValue ?? 0, question.maxValue ?? 0];
   }
 
-  return test.questions.reduce((total, question) => {
-    if (question.choices?.length) {
-      const maxChoice = Math.max(...question.choices.map((choice) => choice.score ?? 0));
-      if (question.type === 'multi-select') {
-        const cap = question.maxSelections ?? question.choices.length;
-        return total + maxChoice * cap;
-      }
-      return total + maxChoice;
-    }
+  if (!question.choices?.length) return [0, 0];
 
-    if (question.type === 'numeric-scale') {
-      return total + (question.maxValue ?? 0);
-    }
+  if (question.type === 'multi-select') {
+    const scores = question.choices.map((choice) => choice.score ?? 0).sort((a, b) => b - a);
+    const cap = question.maxSelections ?? scores.length;
+    const floor = question.minSelections ?? 0;
+    const max = scores.slice(0, cap).reduce((total, value) => total + Math.max(value, 0), 0);
+    const min = [...scores].reverse().slice(0, floor).reduce((total, value) => total + value, 0);
+    return [min, max];
+  }
 
-    return total;
-  }, 0);
+  return choiceScoreRange(question);
 }
 
-export function scoreTestForDefinition(
-  test: TestDefinition,
-  answers: Record<string, AnswerValue>,
-): TestScoreBreakdown {
-  if (test.slug === 'mdq') {
-    const symptomYesCount = Array.from({ length: 13 }, (_, index) => answers[`mdq-q${index + 1}`] === 'yes').filter(Boolean).length;
-    const samePeriod = answers['mdq-q14'] === 'yes';
-    const impairment = answers['mdq-q15'];
-    const moderateOrSerious = impairment === 'moderate' || impairment === 'serious';
-    const positive = symptomYesCount >= 7 && samePeriod && moderateOrSerious;
+function sumRange(questions: TestQuestion[]): [number, number] {
+  return questions.reduce<[number, number]>(
+    (range, question) => {
+      const [min, max] = questionScoreRange(question);
+      return [range[0] + min, range[1] + max];
+    },
+    [0, 0],
+  );
+}
 
-    return {
-      totalScore: symptomYesCount,
-      maxScore: 13,
-      normalizedScore: Math.round((symptomYesCount / 13) * 100),
-      band: positive
-        ? { label: 'Positive screen rule met', min: 0, max: 0, description: 'Common MDQ rule met (7+ symptoms, same period, moderate/serious impact).' }
-        : { label: 'Positive screen rule not met', min: 0, max: 0, description: 'Does not meet common MDQ positive screen rule.' },
-    };
+function toPercent(score: number, min: number, max: number): number {
+  if (max <= min) return 0;
+  return Math.round(((score - min) / (max - min)) * 100);
+}
+
+function findBand(bands: SeverityBand[] | undefined, score: number) {
+  return bands?.find((band) => score >= band.min && score <= band.max);
+}
+
+function scoreDomain(test: TestDefinition, domain: ScoringDomain, answers: Record<string, AnswerValue>): DomainScore {
+  const questions = domain.questionIds
+    .map((questionId) => test.questions.find((item) => item.id === questionId))
+    .filter((question): question is TestQuestion => Boolean(question));
+
+  const multiplier = domain.multiplier ?? 1;
+  const score = questions.reduce((total, question) => total + readQuestionScore(question, answers[question.id]), 0) * multiplier;
+  const [baseMin, baseMax] = sumRange(questions);
+  const minScore = baseMin * multiplier;
+  const maxScore = baseMax * multiplier;
+
+  return {
+    id: domain.id,
+    label: domain.label,
+    score,
+    minScore,
+    maxScore,
+    percent: toPercent(score, minScore, maxScore),
+    band: findBand(domain.cutoffBands, score),
+    parentId: domain.parentId,
+  };
+}
+
+function scoreMdq(answers: Record<string, AnswerValue>): TestScoreBreakdown {
+  const symptomYesCount = Array.from({ length: 13 }, (_, index) => answers[`mdq-q${index + 1}`] === 'yes').filter(Boolean).length;
+  const samePeriod = answers['mdq-q14'] === 'yes';
+  const impairment = answers['mdq-q15'];
+  const positive = symptomYesCount >= 7 && samePeriod && (impairment === 'moderate' || impairment === 'serious');
+
+  return {
+    totalScore: symptomYesCount,
+    minScore: 0,
+    maxScore: 13,
+    normalizedScore: toPercent(symptomYesCount, 0, 13),
+    band: positive
+      ? { label: 'Positive screen rule met', min: 0, max: 0, description: 'the common MDQ rule is met (7+ symptoms, in the same period, with moderate or serious impact)' }
+      : { label: 'Positive screen rule not met', min: 0, max: 0, description: 'the common MDQ positive-screen rule is not met' },
+  };
+}
+
+export function scoreTestForDefinition(test: TestDefinition, answers: Record<string, AnswerValue>): TestScoreBreakdown {
+  if (test.slug === 'mdq') {
+    return scoreMdq(answers);
   }
 
   const totalScore = test.questions.reduce((total, question) => total + readQuestionScore(question, answers[question.id]), 0);
-
-  const maxScore = computeMaxScore(test);
-  const normalizedScore = maxScore > 0 ? Math.round((totalScore / maxScore) * 100) : 0;
-
-  const domains = test.scoring.domains?.map((domain) => {
-    const domainScore = domain.questionIds.reduce((total, questionId) => {
-      const question = test.questions.find((item) => item.id === questionId);
-      if (!question) return total;
-      return total + readQuestionScore(question, answers[questionId]);
-    }, 0);
-
-    const baseMax = domain.questionIds.reduce((total, questionId) => {
-      const question = test.questions.find((item) => item.id === questionId);
-      if (!question) return total;
-      if (question.choices?.length) {
-        return total + Math.max(...question.choices.map((choice) => choice.score ?? 0));
-      }
-      return total;
-    }, 0);
-
-    const finalScore = domain.multiplier ? domainScore * domain.multiplier : domainScore;
-    const finalMax = domain.multiplier ? baseMax * domain.multiplier : baseMax;
-
-    return {
-      id: domain.id,
-      label: domain.label,
-      score: finalScore,
-      maxScore: finalMax,
-      band: resolveDomainBand(domain, finalScore),
-    };
-  });
+  const [computedMin, computedMax] = sumRange(test.questions);
+  const minScore = test.scoring.minScore ?? computedMin;
+  const maxScore = test.scoring.maxScore ?? computedMax;
 
   return {
     totalScore,
+    minScore,
     maxScore,
-    normalizedScore,
-    band: resolveBand(test, totalScore),
-    domains,
+    normalizedScore: toPercent(totalScore, minScore, maxScore),
+    band: findBand(test.scoring.cutoffBands, totalScore),
+    domains: test.scoring.domains?.map((domain) => scoreDomain(test, domain, answers)),
   };
 }
 
@@ -175,92 +178,107 @@ export function detectCrisisSignal(
   return undefined;
 }
 
-function worstDomainSeverity(
-  test: TestDefinition,
-  breakdown: TestScoreBreakdown,
-): { domainLabel: string; band: NonNullable<TestScoreBreakdown['band']> } | undefined {
-  if (!breakdown.domains?.length) return undefined;
+function worstDomainSeverity(test: TestDefinition, domains: DomainScore[]) {
+  let worst: { domain: DomainScore; band: SeverityBand; rank: number } | undefined;
 
-  let best: { domainLabel: string; band: NonNullable<TestScoreBreakdown['band']>; rank: number } | undefined;
-
-  for (const domainResult of breakdown.domains) {
-    if (!domainResult.band) continue;
-    const original = test.scoring.domains?.find((item) => item.id === domainResult.id);
-    const rank = original?.cutoffBands?.findIndex((band) => band.label === domainResult.band!.label) ?? -1;
+  for (const domain of domains) {
+    if (!domain.band) continue;
+    const definition = test.scoring.domains?.find((item) => item.id === domain.id);
+    const rank = definition?.cutoffBands?.findIndex((band) => band.label === domain.band!.label) ?? -1;
     if (rank < 0) continue;
-    if (!best || rank > best.rank) {
-      best = { domainLabel: domainResult.label.replace(/\s*\(x\d+\)\s*$/, ''), band: domainResult.band, rank };
-    }
+    if (!worst || rank > worst.rank) worst = { domain, band: domain.band, rank };
   }
 
-  return best ? { domainLabel: best.domainLabel, band: best.band } : undefined;
+  return worst;
 }
 
-export function scoreTest(): number {
-  return 0;
+/** Where a score sits within its own range. Without population norms this is all that can honestly be said. */
+function rangeLevel(percent: number): 'low' | 'middle' | 'high' {
+  if (percent < 34) return 'low';
+  if (percent < 67) return 'middle';
+  return 'high';
 }
 
-export function toResultSummary(score: number, testTitle: string): TestResultSummary {
-  return {
-    ...sampleResult,
-    id: `r-${Date.now()}`,
-    score,
-    testTitle,
-  };
+const levelWords = { low: 'Lower', middle: 'Moderate', high: 'Higher' } as const;
+
+function describeTopLevelDomains(domains: DomainScore[]) {
+  const topLevel = domains.filter((domain) => !domain.parentId);
+  const ranked = [...topLevel].sort((a, b) => b.percent - a.percent);
+  return { topLevel, highest: ranked.slice(0, 2), lowest: ranked.slice(-2).reverse() };
 }
+
+const nonMeaningBySignal = {
+  crisis: ['It is not a diagnosis.', 'It is not a substitute for a real risk assessment by a professional.', 'Reaching out for support is not an overreaction.'],
+  screener: ['It is not a diagnosis.', 'A screening tool can be wrong in either direction.', 'Only a qualified professional can properly assess this.'],
+  trait: ['It is not a judgement — every trait level has trade-offs.', 'Levels are relative to this scale, not compared with other people.', 'Traits shift with context, age, and effort.'],
+  reflection: ['It is not a diagnosis.', 'It does not define your identity.', 'It is one snapshot, not your whole story.'],
+};
 
 export function toResultSummaryFromBreakdown(
   test: TestDefinition,
   breakdown: TestScoreBreakdown,
   answers: Record<string, AnswerValue> = {},
 ): TestResultSummary {
-  const normalized = breakdown.normalizedScore;
   const crisisSignal = detectCrisisSignal(test, answers, breakdown);
-  const isClinicalScreener = !crisisSignal && test.tags.includes('clinical-screener');
-  const clinicalBand = isClinicalScreener ? breakdown.band : undefined;
-  const worstDomain = isClinicalScreener && !clinicalBand ? worstDomainSeverity(test, breakdown) : undefined;
+  const direction = test.scoring.higherIs;
+  const domains = breakdown.domains ?? [];
+  const isScreener = test.tags.includes('clinical-screener');
+  const band = breakdown.band;
+  const worstDomain = !band ? worstDomainSeverity(test, domains) : undefined;
+  const isTraitProfile = direction === 'neutral' && domains.length > 0;
+  const level = rangeLevel(breakdown.normalizedScore);
+  const scoreLine = `${breakdown.totalScore} of a possible ${breakdown.minScore}–${breakdown.maxScore}`;
 
-  const pattern = crisisSignal
-    ? crisisCopy[crisisSignal.level].title
-    : clinicalBand
-      ? clinicalBand.label
-      : worstDomain
-        ? `${worstDomain.domainLabel}: ${worstDomain.band.label}`
-        : normalized >= 80
-          ? 'Strongly grounded'
-          : normalized >= 60
-            ? 'Mostly steady'
-            : normalized >= 40
-              ? 'Mixed right now'
-              : 'Needs attention';
+  let pattern: string;
+  let meaning: string;
+  let strengths: string[];
+  let growthAreas: string[];
+  let nonMeaning: string[];
 
-  const strengths = [
-    normalized >= 65 ? 'Clear self-awareness' : 'Honest signal',
-    test.tone === 'reflective' ? 'Reflection-ready' : 'Direct feedback',
-    test.depth === 'deep' ? 'Pattern depth' : 'Quick clarity',
-  ];
-
-  const growthAreas = [
-    normalized >= 70 ? 'Consistency under pressure' : 'Stabilizing your baseline',
-    test.category,
-    breakdown.band?.label ?? 'Reading context carefully',
-  ];
-
-  const meaning = crisisSignal
-    ? crisisCopy[crisisSignal.level].body
-    : clinicalBand
-      ? `Your responses fall in the "${clinicalBand.label}" range on this screener${clinicalBand.description ? ` — ${clinicalBand.description}` : ''}. This is a screening signal for reflection, not a diagnosis; if it feels relevant, it may be worth discussing with a doctor or therapist.`
-      : worstDomain
-        ? `Your ${worstDomain.domainLabel.toLowerCase()} subscale falls in the "${worstDomain.band.label}" range. The other subscales are broken out below. This is a screening signal for reflection, not a diagnosis; if it feels relevant, it may be worth discussing with a doctor or therapist.`
-        : normalized >= 70
-          ? `This result suggests you currently have a workable foundation in ${test.category.toLowerCase()}, with a few edges worth refining.`
-          : `This result suggests ${test.category.toLowerCase()} is costing you more energy right now, and a smaller next step would help more than forcing a full reset.`;
-
-  const nonMeaning = crisisSignal
-    ? ['It is not a diagnosis.', 'It is not a substitute for a real risk assessment by a professional.', 'Reaching out for support is not an overreaction.']
-    : clinicalBand || worstDomain
-      ? ['It is not a diagnosis.', 'A screening tool can be wrong in either direction.', 'Only a qualified professional can properly assess this.']
-      : ['It is not a diagnosis.', 'It does not define your identity.', 'It is one snapshot, not your whole story.'];
+  if (crisisSignal) {
+    pattern = crisisCopy[crisisSignal.level].title;
+    meaning = crisisCopy[crisisSignal.level].body;
+    strengths = [crisisSignal.reason];
+    growthAreas = ['Talk to someone today — a crisis line, a doctor, or a person you trust.'];
+    nonMeaning = nonMeaningBySignal.crisis;
+  } else if (band) {
+    pattern = band.label;
+    meaning = `Your score (${scoreLine}) falls in the "${band.label}" range${band.description ? ` — ${band.description}` : ''}.`;
+    if (isScreener) {
+      meaning += ' This is a screening signal for reflection, not a diagnosis; if it feels relevant, it may be worth discussing with a doctor or therapist.';
+    }
+    strengths = [`Score: ${scoreLine}`, `Range: ${band.label}`];
+    growthAreas = isScreener
+      ? ['Retake in two to four weeks to see whether this is a pattern or a passing phase.', 'If this range feels heavy, share the result with a professional.']
+      : ['Notice which questions pulled your score the most.', 'Retake later to see how it moves.'];
+    nonMeaning = isScreener ? nonMeaningBySignal.screener : nonMeaningBySignal.reflection;
+  } else if (worstDomain) {
+    pattern = `${worstDomain.domain.label}: ${worstDomain.band.label}`;
+    meaning = `Your ${worstDomain.domain.label.toLowerCase()} subscale falls in the "${worstDomain.band.label}" range. The other subscales are broken out below. This is a screening signal for reflection, not a diagnosis; if it feels relevant, it may be worth discussing with a doctor or therapist.`;
+    strengths = domains.map((domain) => `${domain.label}: ${domain.score}${domain.band ? ` (${domain.band.label})` : ''}`);
+    growthAreas = ['Retake in two to four weeks to see whether this is a pattern or a passing phase.', 'If a subscale feels heavy, share the result with a professional.'];
+    nonMeaning = nonMeaningBySignal.screener;
+  } else if (isTraitProfile) {
+    const { topLevel, highest, lowest } = describeTopLevelDomains(domains);
+    pattern = `Most pronounced: ${highest[0].label}`;
+    meaning = `Across the ${topLevel.length} areas measured, you scored highest on ${highest.map((item) => item.label).join(' and ')} and lowest on ${lowest.map((item) => item.label).join(' and ')}. Levels are positions on this scale's own range, not comparisons with other people.`;
+    strengths = highest.map((domain) => `${domain.label} — ${levelWords[rangeLevel(domain.percent)].toLowerCase()} (${domain.percent}%)`);
+    growthAreas = lowest.map((domain) => `${domain.label} — ${levelWords[rangeLevel(domain.percent)].toLowerCase()} (${domain.percent}%)`);
+    nonMeaning = nonMeaningBySignal.trait;
+  } else {
+    const good = direction === 'better' ? level === 'high' : direction === 'worse' ? level === 'low' : undefined;
+    const theme = test.category.toLowerCase();
+    pattern = `${levelWords[level]} ${direction === 'worse' ? 'strain' : 'score'} on this scale`;
+    meaning =
+      good === true
+        ? `Your answers (${scoreLine}) suggest ${theme} is a relatively steady area for you right now.`
+        : good === false
+          ? `Your answers (${scoreLine}) suggest ${theme} is taking more out of you right now. A small next step will help more than a full reset.`
+          : `Your answers (${scoreLine}) sit in the middle of this scale — some parts of ${theme} are working, some are not.`;
+    strengths = [`Score: ${scoreLine}`];
+    growthAreas = ['Pick one answer that surprised you and write down why.'];
+    nonMeaning = isScreener ? nonMeaningBySignal.screener : nonMeaningBySignal.reflection;
+  }
 
   return {
     id: `result-${Date.now()}`,
@@ -268,18 +286,17 @@ export function toResultSummaryFromBreakdown(
     testId: test.id,
     testTitle: test.title,
     score: breakdown.normalizedScore,
+    rawScore: breakdown.totalScore,
+    minScore: breakdown.minScore,
+    maxScore: breakdown.maxScore,
+    higherIs: direction,
+    band,
     pattern,
     strengths,
     growthAreas,
     meaning,
     nonMeaning,
     createdAt: new Date().toISOString(),
-    keyPatterns: [
-      { label: 'Overall clarity', value: breakdown.normalizedScore },
-      { label: 'Current strain', value: Math.max(10, 100 - breakdown.normalizedScore) },
-      { label: 'Follow-through', value: Math.min(100, breakdown.normalizedScore + 8) },
-      { label: 'Recovery room', value: Math.max(15, 88 - breakdown.normalizedScore) },
-    ],
     crisisSignal,
     domains: breakdown.domains,
   };

@@ -1,6 +1,9 @@
-import { AppShell } from '@/components/common/app-shell';
+import type { Metadata } from 'next';
+import { AppShell } from '@/components/common/appShell';
 import { Card } from '@/components/ui/card';
-import { crisisResources } from '@/data/crisis-resources';
+import { crisisResources } from '@/data/crisisResources';
+
+export const metadata: Metadata = { title: 'Privacy & safety' };
 
 export default function PrivacyPage() {
   return (

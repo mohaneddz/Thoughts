@@ -1,5 +1,8 @@
-import { AppShell } from '@/components/common/app-shell';
-import { SavedThoughtsPageClient } from '@/components/pages/saved-thoughts-page-client';
+import type { Metadata } from 'next';
+import { AppShell } from '@/components/common/appShell';
+import { SavedThoughtsPageClient } from '@/components/pages/savedThoughtsPageClient';
+
+export const metadata: Metadata = { title: 'Saved thoughts' };
 
 export default function SavedThoughtsPage() {
   return (

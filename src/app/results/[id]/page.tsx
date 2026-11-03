@@ -1,5 +1,8 @@
-import { AppShell } from '@/components/common/app-shell';
-import { ResultPageClient } from '@/components/pages/result-page-client';
+import type { Metadata } from 'next';
+import { AppShell } from '@/components/common/appShell';
+import { ResultPageClient } from '@/components/pages/resultPageClient';
+
+export const metadata: Metadata = { title: 'Result', robots: { index: false } };
 
 export default async function ResultPage({
   params,

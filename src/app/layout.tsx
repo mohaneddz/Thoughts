@@ -1,7 +1,7 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter, Playfair_Display } from 'next/font/google';
 import './globals.css';
-import { AppProviders } from '@/components/common/app-providers';
+import { AppProviders } from '@/components/common/appProviders';
 import { siteConfig } from '@/config/site';
 
 const inter = Inter({
@@ -15,8 +15,25 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: siteConfig.title,
+  metadataBase: new URL(siteConfig.url),
+  title: { default: siteConfig.title, template: `%s | ${siteConfig.name}` },
   description: siteConfig.description,
+  applicationName: siteConfig.name,
+  openGraph: {
+    type: 'website',
+    siteName: siteConfig.name,
+    title: siteConfig.title,
+    description: siteConfig.description,
+    images: ['/images/hero/home-hero.jpg'],
+  },
+  twitter: { card: 'summary_large_image', title: siteConfig.title, description: siteConfig.description },
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#f2f0ea' },
+    { media: '(prefers-color-scheme: dark)', color: '#121a20' },
+  ],
 };
 
 export default function RootLayout({

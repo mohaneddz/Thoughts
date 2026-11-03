@@ -3,10 +3,10 @@
 import Link from 'next/link';
 import { siteConfig } from '@/config/site';
 import { routes } from '@/config/routes';
-import { useProfile } from '@/hooks/use-profile';
+import { useProfile } from '@/hooks/useProfile';
 import { Avatar } from '@/components/common/avatar';
 import { Logo } from '@/components/common/logo';
-import { ThemeToggle } from '@/components/common/theme-toggle';
+import { ThemeToggle } from '@/components/common/themeToggle';
 
 function ProfileChip({ compact = false }: { compact?: boolean }) {
   const { profile, hasProfile, displayName } = useProfile();

@@ -1,6 +1,9 @@
-import { AppShell } from '@/components/common/app-shell';
+import type { Metadata } from 'next';
+import { AppShell } from '@/components/common/appShell';
 import { learnData } from '@/data/learn';
-import { LearnArticleCard } from '@/components/common/learn-article-card';
+import { LearnArticleCard } from '@/components/common/learnArticleCard';
+
+export const metadata: Metadata = { title: 'Learn' };
 
 export default function LearnPage() {
   return (

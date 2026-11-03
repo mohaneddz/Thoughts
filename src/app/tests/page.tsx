@@ -1,5 +1,8 @@
-import { AppShell } from '@/components/common/app-shell';
-import { TestsLibraryPage } from '@/components/pages/tests-library-page';
+import type { Metadata } from 'next';
+import { AppShell } from '@/components/common/appShell';
+import { TestsLibraryPage } from '@/components/pages/testsLibraryPage';
+
+export const metadata: Metadata = { title: 'Test library' };
 
 export default function TestsPage() {
   return (

@@ -1,4 +1,4 @@
-import type { SeverityBand } from '@/types/test';
+import type { DomainScore, ScoreDirection, SeverityBand } from '@/types/test';
 
 export interface PatternScore {
   label: string;
@@ -10,27 +10,29 @@ export interface CrisisSignal {
   reason: string;
 }
 
-export interface DomainResult {
-  id: string;
-  label: string;
-  score: number;
-  maxScore: number;
-  band?: SeverityBand;
-}
+/** Older saved results may lack minScore/percent, so those stay optional when reading from storage. */
+export type DomainResult = Omit<DomainScore, 'minScore' | 'percent'> & Partial<Pick<DomainScore, 'minScore' | 'percent'>>;
 
 export interface TestResultSummary {
   id: string;
   userId: string;
   testId: string;
   testTitle: string;
+  /** 0-100 position between the lowest and highest possible total. */
   score: number;
+  rawScore?: number;
+  minScore?: number;
+  maxScore?: number;
+  higherIs?: ScoreDirection;
+  band?: SeverityBand;
   pattern: string;
   strengths: string[];
   growthAreas: string[];
   meaning: string;
   nonMeaning: string[];
   createdAt: string;
-  keyPatterns: PatternScore[];
+  /** Legacy field from results saved before 2026-10; it held invented numbers and is no longer written or shown. */
+  keyPatterns?: PatternScore[];
   crisisSignal?: CrisisSignal;
   domains?: DomainResult[];
 }

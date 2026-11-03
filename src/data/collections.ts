@@ -1,76 +1,66 @@
+export interface CollectionStep {
+  kind: 'test' | 'tool';
+  /** Test slug or reflection tool id. */
+  id: string;
+}
+
 export interface CollectionGuide {
   id: string;
   title: string;
   intro: string;
-  tests: string[];
-  tools: string[];
-  order: string[];
+  steps: CollectionStep[];
 }
+
+const test = (id: string): CollectionStep => ({ kind: 'test', id });
+const tool = (id: string): CollectionStep => ({ kind: 'tool', id });
 
 export const collectionsData: CollectionGuide[] = [
   {
     id: 'understand-yourself',
     title: 'Understand yourself',
     intro: 'Build a clear snapshot of your patterns with gentle structure.',
-    tests: ['Emotional Awareness Test', 'Overthinking Style Test'],
-    tools: ['Emotion wheel', 'Why do I feel this? guide'],
-    order: ['Emotional Awareness Test', 'Emotion wheel', 'Overthinking Style Test'],
+    steps: [test('emotional-awareness-test'), tool('emotion-wheel'), test('overthinking-test')],
   },
   {
     id: 'relationships',
     title: 'Relationships',
     intro: 'Reflect on closeness, communication, and emotional boundaries.',
-    tests: ['Attachment Reflection Test', 'Social Battery Test'],
-    tools: ['Conflict reflection', 'Decision helper'],
-    order: ['Attachment Reflection Test', 'Conflict reflection', 'Social Battery Test'],
+    steps: [test('attachment-style-test'), tool('conflict-reflection'), test('social-battery-test')],
   },
   {
     id: 'burnout-check',
     title: 'Burnout check',
     intro: 'Notice early stress signals and reset your recovery habits.',
-    tests: ['Stress Pattern Test', 'Motivation Style Test'],
-    tools: ['Energy drain finder', 'Habit loop analyzer'],
-    order: ['Stress Pattern Test', 'Energy drain finder', 'Motivation Style Test'],
+    steps: [test('pss-perceived-stress-scale'), tool('energy-drain-finder'), test('burnout-reflection-test')],
   },
   {
     id: 'confidence',
     title: 'Confidence',
     intro: 'Strengthen self-trust through values and realistic habits.',
-    tests: ['Self-Esteem Reflection Test', 'Values Clarity Test'],
-    tools: ['Values sorter', 'Overthinking unpacker'],
-    order: ['Self-Esteem Reflection Test', 'Values sorter', 'Values Clarity Test'],
+    steps: [test('rosenberg-self-esteem-scale'), tool('values-sorter'), test('inner-critic-test')],
   },
   {
     id: 'career-direction',
     title: 'Career direction',
     intro: 'Clarify what type of work supports your growth and energy.',
-    tests: ['Career Direction Test', 'Values Clarity Test'],
-    tools: ['Decision helper', 'Energy drain finder'],
-    order: ['Values Clarity Test', 'Career Direction Test', 'Decision helper'],
+    steps: [test('values-clarity-test'), test('career-direction-test'), tool('decision-helper')],
   },
   {
     id: 'overthinking',
     title: 'Overthinking',
     intro: 'Move from looping thoughts to practical reflection.',
-    tests: ['Overthinking Style Test', 'Stress Pattern Test'],
-    tools: ['Overthinking unpacker', 'Why do I feel this? guide'],
-    order: ['Overthinking Style Test', 'Overthinking unpacker', 'Stress Pattern Test'],
+    steps: [test('overthinking-test'), tool('overthinking-unpacker'), tool('why-feel-this')],
   },
   {
     id: 'emotional-clarity',
     title: 'Emotional clarity',
     intro: 'Name feelings clearly and respond with intention.',
-    tests: ['Emotional Awareness Test', 'Attachment Reflection Test'],
-    tools: ['Emotion wheel', 'Conflict reflection'],
-    order: ['Emotion wheel', 'Emotional Awareness Test', 'Attachment Reflection Test'],
+    steps: [tool('emotion-wheel'), test('emotional-awareness-test'), tool('why-feel-this')],
   },
   {
     id: 'discipline-habits',
     title: 'Discipline and habits',
     intro: 'Design a smaller, sustainable discipline system.',
-    tests: ['Habit Loop Test', 'Motivation Style Test'],
-    tools: ['Habit loop analyzer', 'Values sorter'],
-    order: ['Habit Loop Test', 'Habit loop analyzer', 'Motivation Style Test'],
+    steps: [test('habit-loop-test'), tool('habit-loop-analyzer'), test('motivation-style-test')],
   },
 ];
-

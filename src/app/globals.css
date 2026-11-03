@@ -27,6 +27,12 @@
   --color-danger-bg: rgba(220, 38, 38, 0.1);
   --color-danger-border: rgba(220, 38, 38, 0.35);
   --color-danger-text: #7f1d1d;
+
+  --color-scale-1: #4f8f7a;
+  --color-scale-2: #93a86a;
+  --color-scale-3: #d1a14f;
+  --color-scale-4: #c8714a;
+  --color-scale-5: #a8473f;
 }
 
 :root[data-theme='dark'] {
@@ -51,6 +57,12 @@
   --color-danger-bg: rgba(248, 113, 113, 0.14);
   --color-danger-border: rgba(248, 113, 113, 0.4);
   --color-danger-text: #fecaca;
+
+  --color-scale-1: #5fae96;
+  --color-scale-2: #a3b874;
+  --color-scale-3: #ddb064;
+  --color-scale-4: #d98560;
+  --color-scale-5: #c96259;
 }
 
 * {

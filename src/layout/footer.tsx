@@ -9,6 +9,7 @@ export function Footer() {
     { href: routes.tests, label: 'Test library' },
     { href: routes.checkIn, label: 'Check-in' },
     { href: routes.savedThoughts, label: 'Saved thoughts' },
+    { href: routes.results, label: 'Your results' },
     { href: routes.dashboard, label: 'Insight dashboard' },
   ];
 

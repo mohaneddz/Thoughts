@@ -1,7 +1,7 @@
-import { AppShell } from '@/components/common/app-shell';
+import { AppShell } from '@/components/common/appShell';
 import { HomeHero } from '@/sections/home/hero';
-import { FeaturedTests } from '@/sections/home/featured-tests';
-import { HowItWorks } from '@/sections/home/how-it-works';
+import { FeaturedTests } from '@/sections/home/featuredTests';
+import { HowItWorks } from '@/sections/home/howItWorks';
 
 export default function HomePage() {
   return (
