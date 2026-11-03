@@ -67,7 +67,7 @@ export function DecisionHelperTool() {
         <table className='w-full min-w-[34rem] border-separate border-spacing-y-2 text-sm'>
           <thead>
             <tr>
-              <th className='w-[38%] pb-1 text-left text-xs font-semibold uppercase tracking-[0.14em] text-[var(--color-muted)]'>Criteria · weight</th>
+              <th className='w-[38%] pb-1 text-start text-xs font-semibold uppercase tracking-[0.14em] text-[var(--color-muted)]'>Criteria · weight</th>
               {options.map((option, index) => (
                 <th key={option.id} className='px-1 pb-1 align-bottom'>
                   <div className='flex items-center gap-1'>
@@ -85,7 +85,7 @@ export function DecisionHelperTool() {
           <tbody>
             {criteria.map((criterion) => (
               <tr key={criterion.id}>
-                <td className='pr-2'>
+                <td className='pe-2'>
                   <div className='flex items-center gap-2'>
                     <input aria-label='Criterion name' value={criterion.name} onChange={(event) => setCriteria((prev) => prev.map((item) => (item.id === criterion.id ? { ...item, name: event.target.value } : item)))} className={nameInputClass} />
                     <select

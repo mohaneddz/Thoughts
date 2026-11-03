@@ -143,7 +143,7 @@ function VariantDialog({
                 key={variant.id}
                 type='button'
                 disabled={isPending}
-                className='group cursor-pointer rounded-[1.4rem] border border-[var(--color-panel-border)] bg-[var(--color-surface)] p-4 text-left transition enabled:hover:border-[var(--color-primary)]/45 enabled:hover:bg-[var(--color-surface-soft)] disabled:cursor-not-allowed disabled:opacity-60'
+                className='group cursor-pointer rounded-[1.4rem] border border-[var(--color-panel-border)] bg-[var(--color-surface)] p-4 text-start transition enabled:hover:border-[var(--color-primary)]/45 enabled:hover:bg-[var(--color-surface-soft)] disabled:cursor-not-allowed disabled:opacity-60'
                 onClick={() => {
                   router.push(routes.test(variant.slug));
                   onClose();
@@ -186,7 +186,7 @@ export function TestCard({ test, compact = false }: { test: TestCardData; compac
     <>
       <button
         type='button'
-        className='block h-full w-full cursor-pointer text-left'
+        className='block h-full w-full cursor-pointer text-start'
         aria-haspopup={hasVariantChoice ? 'dialog' : undefined}
         aria-label={hasVariantChoice ? `Choose a variant for ${normalizedTest.title}` : `Open ${normalizedTest.title}`}
         onClick={() => {
@@ -209,7 +209,7 @@ export function TestCard({ test, compact = false }: { test: TestCardData; compac
             />
             <div className='absolute inset-0 bg-[linear-gradient(180deg,rgba(8,15,24,0.06),rgba(8,15,24,0.48))]' />
             <div className='absolute inset-x-0 bottom-0 h-24 bg-[radial-gradient(circle_at_bottom,rgba(248,242,231,0.18),transparent_62%)]' />
-            <div className='absolute right-3 top-3'>
+            <div className='absolute end-3 top-3'>
               <span className='inline-flex items-center gap-1.5 rounded-full border border-white/35 bg-[rgba(8,15,24,0.48)] px-3 py-1.5 text-xs font-semibold text-white backdrop-blur-sm'>
                 {hasVariantChoice ? <Layers3 size={12} /> : <Files size={12} />}
                 {variantLabel}

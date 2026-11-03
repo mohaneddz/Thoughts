@@ -48,7 +48,7 @@ export function ChoiceList({
             onClick={() => onSelect(option.value)}
             onKeyDown={(event) => onKeyDown(event, index)}
             className={cn(
-              'flex w-full items-center justify-between gap-3 rounded-xl border px-3 py-3 text-left text-sm transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-primary)]',
+              'flex w-full items-center justify-between gap-3 rounded-xl border px-3 py-3 text-start text-sm transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-primary)]',
               active
                 ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/10 text-[var(--color-text-strong)]'
                 : 'border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--color-primary)]/40',

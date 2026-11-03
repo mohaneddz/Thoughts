@@ -69,7 +69,7 @@ export function LineChart({
         ))}
       </div>
 
-      <div className='relative'>
+      <div className='relative' dir='ltr'>
         <svg
           viewBox={`0 0 ${width} ${height}`}
           className='h-auto w-full touch-none select-none'

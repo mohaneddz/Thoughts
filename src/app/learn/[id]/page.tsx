@@ -60,7 +60,7 @@ export default async function LearnArticlePage({ params }: { params: Promise<{ i
               <p key={paragraph.slice(0, 40)} className='leading-8 text-[var(--color-text)]'>{paragraph}</p>
             ))}
             {section.steps ? (
-              <ul className='space-y-2 border-l-2 border-[var(--color-primary)]/40 pl-4'>
+              <ul className='space-y-2 border-s-2 border-[var(--color-primary)]/40 ps-4'>
                 {section.steps.map((step) => (
                   <li key={step} className='leading-7 text-[var(--color-text)]'>{step}</li>
                 ))}

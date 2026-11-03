@@ -95,11 +95,11 @@ export function EnergyDrainFinderTool() {
             {[...drains, ...items.filter((item) => item.effect === 0), ...chargers.slice().reverse()].map((item) => (
               <li key={item.id} className='grid grid-cols-[minmax(0,1fr)_7rem_minmax(0,1fr)_auto] items-center gap-2 text-sm'>
                 <span className='flex justify-end'>
-                  {item.effect < 0 ? <span className='h-3 rounded-l-full bg-[var(--color-scale-5)]' style={{ width: `${(-item.effect / 3) * 100}%` }} /> : null}
+                  {item.effect < 0 ? <span className='h-3 rounded-s-full bg-[var(--color-scale-5)]' style={{ width: `${(-item.effect / 3) * 100}%` }} /> : null}
                 </span>
                 <span className='truncate text-center text-[var(--color-text)]' title={`${item.name} · ${item.kind}`}>{item.name}</span>
                 <span className='flex'>
-                  {item.effect > 0 ? <span className='h-3 rounded-r-full bg-[var(--color-scale-1)]' style={{ width: `${(item.effect / 3) * 100}%` }} /> : null}
+                  {item.effect > 0 ? <span className='h-3 rounded-e-full bg-[var(--color-scale-1)]' style={{ width: `${(item.effect / 3) * 100}%` }} /> : null}
                 </span>
                 <button type='button' aria-label={`Remove ${item.name}`} onClick={() => setItems((prev) => prev.filter((entry) => entry.id !== item.id))} className='text-[var(--color-muted)] hover:text-[var(--color-text)]'>
                   <X size={14} />

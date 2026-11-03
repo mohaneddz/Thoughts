@@ -47,14 +47,14 @@ export function AIChatBox({ context }: { context: AIResultContext }) {
       </div>
 
       {messages.length ? (
-        <div className='max-h-[28rem] space-y-3 overflow-y-auto pr-1'>
+        <div className='max-h-[28rem] space-y-3 overflow-y-auto pe-1'>
           {messages.map((message, index) => (
             <div
               key={index}
               className={cn(
                 'max-w-[85%] whitespace-pre-wrap rounded-2xl px-4 py-2.5 text-sm leading-6',
                 message.role === 'user'
-                  ? 'ml-auto bg-[var(--color-text-strong)] text-[var(--color-surface)]'
+                  ? 'ms-auto bg-[var(--color-text-strong)] text-[var(--color-surface)]'
                   : 'bg-[var(--color-surface-soft)] text-[var(--color-text)]',
               )}
             >
@@ -71,7 +71,7 @@ export function AIChatBox({ context }: { context: AIResultContext }) {
               key={starter}
               type='button'
               onClick={() => send(starter)}
-              className='rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1.5 text-left text-sm text-[var(--color-text)] transition hover:border-[var(--color-primary)]/50'
+              className='rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1.5 text-start text-sm text-[var(--color-text)] transition hover:border-[var(--color-primary)]/50'
             >
               {starter}
             </button>
