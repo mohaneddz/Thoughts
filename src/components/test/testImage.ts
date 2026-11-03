@@ -18,6 +18,7 @@ export function imageForTest(slug: string): string {
     'c-ssrs': 'c-ssrs-columbia-suicide-severity-rating-scale',
     mdq: 'mdq-mood-disorder-questionnaire',
     'audit-c': 'audit',
+    'satisfaction-with-life-scale': 'who-5-well-being-index',
   };
 
   const coverSlug = aliases[slug] ?? slug;

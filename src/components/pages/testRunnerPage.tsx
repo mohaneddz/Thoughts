@@ -306,13 +306,11 @@ export function TestRunnerPage({ test }: { test: TestDefinition }) {
                 </div>
               </div>
 
-              <div className='flex flex-wrap items-start gap-3'>
-                <a href={test.sourceUrl} target='_blank' rel='noreferrer' className='text-xs font-semibold text-[var(--color-primary)] underline'>
+              {test.sourceUrl ? (
+                <a href={test.sourceUrl} target='_blank' rel='noreferrer' className='self-start text-xs font-semibold text-[var(--color-primary)] underline'>
                   Source and instrument reference
                 </a>
-                <div className='min-w-0 flex-1'>
-                </div>
-              </div>
+              ) : null}
             </div>
           </div>
         </Card>
