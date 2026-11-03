@@ -1,4 +1,5 @@
 import { routes } from '@/config/routes';
+import type { MessageKey } from '@/i18n/messages';
 
 export const siteConfig = {
   name: 'Happy Healthy Human',
@@ -10,19 +11,19 @@ export const siteConfig = {
   disclaimer:
     'This is for self-reflection only. It is not a diagnosis or medical advice.',
   navLinks: [
-    { href: routes.tests, label: 'Tests' },
-    { href: routes.reflectionTools, label: 'Tools' },
-    { href: routes.checkIn, label: 'Check-in' },
-    { href: routes.dashboard, label: 'Dashboard' },
-    { href: routes.savedThoughts, label: 'Thoughts' },
-    { href: routes.learn, label: 'Learn' },
-  ],
+    { href: routes.tests, labelKey: 'nav.tests' },
+    { href: routes.reflectionTools, labelKey: 'nav.tools' },
+    { href: routes.checkIn, labelKey: 'nav.checkIn' },
+    { href: routes.dashboard, labelKey: 'nav.dashboard' },
+    { href: routes.savedThoughts, labelKey: 'nav.thoughts' },
+    { href: routes.learn, labelKey: 'nav.learn' },
+  ] satisfies Array<{ href: string; labelKey: MessageKey }>,
   mobileLinks: [
-    { href: routes.home, label: 'Home', icon: 'home' },
-    { href: routes.tests, label: 'Tests', icon: 'tests' },
-    { href: routes.checkIn, label: 'Check-in', icon: 'check-in' },
-    { href: routes.learn, label: 'Learn', icon: 'learn' },
-    { href: routes.profile, label: 'Profile', icon: 'profile' },
-  ],
+    { href: routes.home, labelKey: 'nav.home', icon: 'home' },
+    { href: routes.tests, labelKey: 'nav.tests', icon: 'tests' },
+    { href: routes.checkIn, labelKey: 'nav.checkIn', icon: 'checkIn' },
+    { href: routes.learn, labelKey: 'nav.learn', icon: 'learn' },
+    { href: routes.profile, labelKey: 'nav.profile', icon: 'profile' },
+  ] satisfies Array<{ href: string; labelKey: MessageKey; icon: string }>,
 };
 

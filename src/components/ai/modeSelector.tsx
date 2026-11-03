@@ -21,7 +21,7 @@ export function ModeSelector({
           aria-pressed={active === mode.id}
           onClick={() => onChange(mode.id)}
           className={cn(
-            'rounded-2xl border p-4 text-left transition',
+            'rounded-2xl border p-4 text-start transition',
             active === mode.id
               ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/10'
               : 'border-[var(--color-border)] bg-[var(--color-surface)]',

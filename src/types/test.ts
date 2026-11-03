@@ -69,6 +69,18 @@ export interface ScoringDomain {
   cutoffBands?: SeverityBand[];
   /** Facets point at the broad domain they belong to, so results can nest them. */
   parentId?: string;
+  /** What scoring high on this domain tends to look like, shown when it is the most pronounced one. */
+  description?: string;
+  /** One concrete thing to try that fits this domain. */
+  tip?: string;
+}
+
+/** A named pattern across domains, e.g. secure vs anxious attachment. First match wins. */
+export interface ScoreProfile {
+  label: string;
+  description: string;
+  /** Domain id → which half of its range the score must sit in (50% and above counts as high). */
+  when: Record<string, 'low' | 'high'>;
 }
 
 export interface TestScoringConfig {
@@ -85,6 +97,7 @@ export interface TestScoringConfig {
   maxScore?: number;
   cutoffBands?: SeverityBand[];
   domains?: ScoringDomain[];
+  profiles?: ScoreProfile[];
   notes?: string;
 }
 

@@ -7,6 +7,8 @@ export interface LocalProfile {
   /** Downscaled data URL. Only set when avatarKind is 'image'. */
   avatarImage?: string;
   accent: string;
+  /** Which country's crisis lines to show; unset means guess from the browser language. */
+  crisisRegion?: string;
   createdAt: string;
 }
 
@@ -54,6 +56,7 @@ export function readProfile(): LocalProfile {
       avatarEmoji: typeof parsed.avatarEmoji === 'string' && parsed.avatarEmoji ? parsed.avatarEmoji : defaultProfile.avatarEmoji,
       avatarImage: typeof parsed.avatarImage === 'string' ? parsed.avatarImage : undefined,
       accent: typeof parsed.accent === 'string' && parsed.accent ? parsed.accent : defaultProfile.accent,
+      crisisRegion: typeof parsed.crisisRegion === 'string' ? parsed.crisisRegion : undefined,
       createdAt: typeof parsed.createdAt === 'string' ? parsed.createdAt : '',
     };
   } catch {

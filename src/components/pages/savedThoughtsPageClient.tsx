@@ -72,16 +72,16 @@ export function SavedThoughtsPageClient() {
     <div className='space-y-4'>
       <div className='flex flex-wrap items-center gap-3'>
         <div className='relative min-w-56 flex-1'>
-          <Search size={16} className='pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-muted)]' />
+          <Search size={16} className='pointer-events-none absolute start-3 top-1/2 -translate-y-1/2 text-[var(--color-muted)]' />
           <input
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder='Search your thoughts'
             aria-label='Search saved thoughts'
-            className='h-11 w-full rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] pl-9 pr-9 text-sm outline-none focus:border-[var(--color-primary)]'
+            className='h-11 w-full rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] ps-9 pe-9 text-sm outline-none focus:border-[var(--color-primary)]'
           />
           {query ? (
-            <button type='button' aria-label='Clear search' onClick={() => setQuery('')} className='absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-muted)]'>
+            <button type='button' aria-label='Clear search' onClick={() => setQuery('')} className='absolute end-3 top-1/2 -translate-y-1/2 text-[var(--color-muted)]'>
               <X size={14} />
             </button>
           ) : null}

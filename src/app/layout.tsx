@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter, Playfair_Display } from 'next/font/google';
+import { Inter, Noto_Sans_Arabic, Playfair_Display } from 'next/font/google';
 import './globals.css';
 import { AppProviders } from '@/components/common/appProviders';
 import { siteConfig } from '@/config/site';
@@ -7,6 +7,11 @@ import { siteConfig } from '@/config/site';
 const inter = Inter({
   variable: '--font-inter',
   subsets: ['latin'],
+});
+
+const notoArabic = Noto_Sans_Arabic({
+  variable: '--font-arabic',
+  subsets: ['arabic'],
 });
 
 const playfair = Playfair_Display({
@@ -42,12 +47,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang='en' className={`${inter.variable} ${playfair.variable}`} data-scroll-behavior='smooth' suppressHydrationWarning>
+    <html lang='en' className={`${inter.variable} ${playfair.variable} ${notoArabic.variable}`} data-scroll-behavior='smooth' suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{
             __html:
-              "(function(){try{var t=localStorage.getItem('happy-healthy-human-theme');document.documentElement.dataset.theme=t==='dark'?'dark':'light';}catch(e){}})();",
+              "(function(){try{var d=document.documentElement;var t=localStorage.getItem('happy-healthy-human-theme');d.dataset.theme=t==='dark'?'dark':'light';var l=localStorage.getItem('happy-healthy-human.locale');if(l==='fr'||l==='ar'){d.lang=l;d.dir=l==='ar'?'rtl':'ltr';}}catch(e){}})();",
           }}
         />
       </head>

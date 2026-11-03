@@ -1,32 +1,23 @@
 import Link from 'next/link';
+import { Clock } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { routes } from '@/config/routes';
-import { testsData } from '@/data/tests';
 import type { LearnArticle } from '@/data/learn';
 
 export function LearnArticleCard({ article }: { article: LearnArticle }) {
-  const related = article.relatedTests
-    .map((slug) => testsData.find((test) => test.slug === slug))
-    .filter((test) => test !== undefined);
-
   return (
-    <Card className='space-y-3'>
-      <p className='text-xs uppercase tracking-wide text-[var(--color-primary)]'>{article.topic}</p>
-      <h3 className='font-heading text-2xl text-[var(--color-text-strong)]'>{article.title}</h3>
-      <p className='text-sm text-[var(--color-muted)]'>{article.summary}</p>
-      {related.length ? (
-        <div className='flex flex-wrap gap-2 pt-1'>
-          {related.map((test) => (
-            <Link
-              key={test.slug}
-              href={routes.test(test.slug)}
-              className='rounded-full border border-[var(--color-border)] px-3 py-1 text-xs font-medium text-[var(--color-text)] transition hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]'
-            >
-              {test.title}
-            </Link>
-          ))}
+    <Link href={routes.article(article.id)} className='group'>
+      <Card className='h-full space-y-3 transition group-hover:-translate-y-0.5 group-hover:border-[var(--color-primary)]/40'>
+        <div className='flex items-center justify-between gap-3'>
+          <p className='text-xs uppercase tracking-wide text-[var(--color-primary)]'>{article.topic}</p>
+          <p className='inline-flex items-center gap-1 text-xs text-[var(--color-muted)]'>
+            <Clock size={12} />
+            {article.minutes} min read
+          </p>
         </div>
-      ) : null}
-    </Card>
+        <h3 className='font-heading text-2xl text-[var(--color-text-strong)] group-hover:text-[var(--color-primary)]'>{article.title}</h3>
+        <p className='text-sm text-[var(--color-muted)]'>{article.summary}</p>
+      </Card>
+    </Link>
   );
 }

@@ -36,7 +36,7 @@ function DomainBar({ domain, direction, compact = false }: { domain: DomainResul
         <p className={cn('text-[var(--color-text-strong)]', compact ? 'text-sm' : 'text-sm font-semibold')}>{domain.label}</p>
         <div className='flex shrink-0 items-center gap-2'>
           {domain.band ? <Badge>{domain.band.label}</Badge> : direction === 'neutral' ? <span className='text-xs text-[var(--color-muted)]'>{levelLabel(percent)}</span> : null}
-          <span className='w-16 text-right text-xs tabular-nums text-[var(--color-muted)]'>
+          <span className='w-16 text-end text-xs tabular-nums text-[var(--color-muted)]'>
             {domain.score} / {domain.maxScore}
           </span>
         </div>
@@ -86,7 +86,7 @@ export function DomainBreakdownCard({ domains, direction = 'worse' }: { domains:
                     <ChevronDown size={14} className={cn('transition-transform', isOpen && 'rotate-180')} />
                   </button>
                   {isOpen ? (
-                    <div className='grid gap-3 border-l-2 border-[var(--color-border)] pl-4 sm:grid-cols-2'>
+                    <div className='grid gap-3 border-s-2 border-[var(--color-border)] ps-4 sm:grid-cols-2'>
                       {facets.map((facet) => (
                         <DomainBar key={facet.id} domain={facet} direction={direction} compact />
                       ))}

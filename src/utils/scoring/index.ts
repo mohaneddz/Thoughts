@@ -204,7 +204,22 @@ const levelWords = { low: 'Lower', middle: 'Moderate', high: 'Higher' } as const
 function describeTopLevelDomains(domains: DomainScore[]) {
   const topLevel = domains.filter((domain) => !domain.parentId);
   const ranked = [...topLevel].sort((a, b) => b.percent - a.percent);
-  return { topLevel, highest: ranked.slice(0, 2), lowest: ranked.slice(-2).reverse() };
+  // Never list a domain as both most and least pronounced.
+  const count = Math.min(2, Math.max(1, Math.floor(topLevel.length / 2)));
+  return { topLevel, highest: ranked.slice(0, count), lowest: ranked.slice(-count).reverse() };
+}
+
+function domainDefinition(test: TestDefinition, id: string) {
+  return test.scoring.domains?.find((domain) => domain.id === id);
+}
+
+function matchProfile(test: TestDefinition, domains: DomainScore[]) {
+  return test.scoring.profiles?.find((profile) =>
+    Object.entries(profile.when).every(([id, side]) => {
+      const domain = domains.find((item) => item.id === id);
+      return domain !== undefined && domain.percent >= 50 === (side === 'high');
+    }),
+  );
 }
 
 const nonMeaningBySignal = {
@@ -251,6 +266,17 @@ export function toResultSummaryFromBreakdown(
     growthAreas = isScreener
       ? ['Retake in two to four weeks to see whether this is a pattern or a passing phase.', 'If this range feels heavy, share the result with a professional.']
       : ['Notice which questions pulled your score the most.', 'Retake later to see how it moves.'];
+
+    // For multi-area tests, point at the area that most needs attention and what to try there.
+    const topLevel = domains.filter((domain) => !domain.parentId);
+    if (topLevel.length > 1 && direction !== 'neutral' && !isScreener) {
+      const ranked = [...topLevel].sort((a, b) => (direction === 'worse' ? b.percent - a.percent : a.percent - b.percent));
+      const focus = domainDefinition(test, ranked[0].id);
+      const strongest = ranked[ranked.length - 1];
+      strengths = [`Score: ${scoreLine}`, `Strongest area: ${strongest.label}`, `Most room to grow: ${ranked[0].label}`];
+      if (focus?.description) meaning += ` The area pulling hardest is ${focus.label.toLowerCase()}: ${focus.description.charAt(0).toLowerCase()}${focus.description.slice(1)}`;
+      if (focus?.tip) growthAreas = [focus.tip, 'Retake in a few weeks to see how it moves.'];
+    }
     nonMeaning = isScreener ? nonMeaningBySignal.screener : nonMeaningBySignal.reflection;
   } else if (worstDomain) {
     pattern = `${worstDomain.domain.label}: ${worstDomain.band.label}`;
@@ -260,8 +286,15 @@ export function toResultSummaryFromBreakdown(
     nonMeaning = nonMeaningBySignal.screener;
   } else if (isTraitProfile) {
     const { topLevel, highest, lowest } = describeTopLevelDomains(domains);
-    pattern = `Most pronounced: ${highest[0].label}`;
-    meaning = `Across the ${topLevel.length} areas measured, you scored highest on ${highest.map((item) => item.label).join(' and ')} and lowest on ${lowest.map((item) => item.label).join(' and ')}. Levels are positions on this scale's own range, not comparisons with other people.`;
+    const profile = matchProfile(test, domains);
+    const top = domainDefinition(test, highest[0].id);
+    const rangeNote = "Levels are positions on this scale's own range, not comparisons with other people.";
+    pattern = profile?.label ?? `Most pronounced: ${highest[0].label}`;
+    meaning = profile
+      ? `${profile.description} ${rangeNote}`
+      : top?.description
+        ? `${top.label}: ${top.description} ${top.tip ? `Try this: ${top.tip}` : ''}`.trim()
+        : `Across the ${topLevel.length} areas measured, you scored highest on ${highest.map((item) => item.label).join(' and ')} and lowest on ${lowest.map((item) => item.label).join(' and ')}. ${rangeNote}`;
     strengths = highest.map((domain) => `${domain.label} — ${levelWords[rangeLevel(domain.percent)].toLowerCase()} (${domain.percent}%)`);
     growthAreas = lowest.map((domain) => `${domain.label} — ${levelWords[rangeLevel(domain.percent)].toLowerCase()} (${domain.percent}%)`);
     nonMeaning = nonMeaningBySignal.trait;

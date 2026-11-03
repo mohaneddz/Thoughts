@@ -1,4 +1,6 @@
+import type { TestCategory } from '@/types/common';
 import type { ChoiceOption, ScoringDomain, TestDefinition, TestQuestion } from '@/types/test';
+import { reflectionTestsData } from '@/data/reflectionTests';
 
 const agree5: ChoiceOption[] = [
   { value: 'strongly-disagree', label: 'Strongly disagree', score: 1 },
@@ -27,9 +29,14 @@ const yesNo: ChoiceOption[] = [
   { value: 'no', label: 'No', score: 0 },
 ];
 
-const trueFalse: ChoiceOption[] = [
-  { value: 'true', label: 'True', score: 1 },
-  { value: 'false', label: 'False', score: 0 },
+const swlsChoices: ChoiceOption[] = [
+  { value: 'strongly-disagree', label: 'Strongly disagree', score: 1 },
+  { value: 'disagree', label: 'Disagree', score: 2 },
+  { value: 'slightly-disagree', label: 'Slightly disagree', score: 3 },
+  { value: 'neutral', label: 'Neither agree nor disagree', score: 4 },
+  { value: 'slightly-agree', label: 'Slightly agree', score: 5 },
+  { value: 'agree', label: 'Agree', score: 6 },
+  { value: 'strongly-agree', label: 'Strongly agree', score: 7 },
 ];
 
 const who5Choices: ChoiceOption[] = [
@@ -92,7 +99,7 @@ function makeDassQuestions(prefix: string, prompts: string[]): TestQuestion[] {
   }));
 }
 
-function makePendingLicensedTest(name: string): TestDefinition {
+function makePendingLicensedTest([name, category]: [string, TestCategory]): TestDefinition {
   const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
   let variantGroup: string | undefined;
   if (name.startsWith('MMPI')) variantGroup = 'mmpi';
@@ -104,7 +111,7 @@ function makePendingLicensedTest(name: string): TestDefinition {
     slug,
     title: name,
     description: 'Commercial instrument — not available in this app.',
-    category: 'Personality',
+    category,
     estimatedMinutes: 0,
     depth: 'quick',
     tone: 'serious',
@@ -117,76 +124,6 @@ function makePendingLicensedTest(name: string): TestDefinition {
     scoring: { model: 'none', higherIs: 'neutral' },
     questions: [],
   };
-}
-
-function createOriginalQuestions(prefix: string, theme: string): TestQuestion[] {
-  return [
-    {
-      id: `${prefix}-q1`,
-      prompt: `In the last 2 weeks, ${theme} has impacted my day-to-day decisions.`,
-      type: 'frequency',
-      choices: freq4,
-      reverseScored: true,
-      required: true,
-    },
-    {
-      id: `${prefix}-q2`,
-      prompt: `Which pattern feels most true about your ${theme} right now?`,
-      type: 'single-choice',
-      choices: [
-        { value: 'stable', label: 'Mostly steady', score: 3 },
-        { value: 'mixed', label: 'Mixed and context-dependent', score: 2 },
-        { value: 'strained', label: 'Strained or hard to manage', score: 1 },
-      ],
-      required: true,
-    },
-    {
-      id: `${prefix}-q3`,
-      prompt: `Select all factors currently shaping your ${theme}.`,
-      helperText: 'Context only — this one is not scored.',
-      type: 'multi-select',
-      choices: [
-        { value: 'sleep', label: 'Sleep quality', score: 0 },
-        { value: 'work', label: 'Work or study pressure', score: 0 },
-        { value: 'relationships', label: 'Relationships', score: 0 },
-        { value: 'health', label: 'Physical health', score: 0 },
-        { value: 'money', label: 'Money stress', score: 0 },
-      ],
-      maxSelections: 3,
-      required: true,
-    },
-    {
-      id: `${prefix}-q4`,
-      prompt: 'True or false: I can usually notice this pattern early enough to respond intentionally.',
-      type: 'true-false',
-      choices: trueFalse,
-      required: true,
-    },
-    {
-      id: `${prefix}-q5`,
-      prompt: `Rate your current confidence in handling ${theme}.`,
-      helperText: '0 = no confidence, 10 = high confidence',
-      type: 'numeric-scale',
-      minValue: 0,
-      maxValue: 10,
-      step: 1,
-      required: true,
-    },
-    {
-      id: `${prefix}-q6`,
-      prompt: 'What is one recent example that captures this pattern?',
-      type: 'short-text',
-      placeholder: 'One concise example...',
-      required: true,
-    },
-    {
-      id: `${prefix}-q7`,
-      prompt: 'Short reflection: what tiny change would make next week better?',
-      type: 'reflection',
-      placeholder: 'Write your reflection...',
-      required: true,
-    },
-  ];
 }
 
 const phqPrompts = [
@@ -750,45 +687,27 @@ const ipipPersonalityScales = [
   },
 ] as const;
 
-const originalTests = [
-  { title: 'Attachment style test', slug: 'attachment-style-test', category: 'Relationships' as const, theme: 'attachment style' },
-  { title: 'Overthinking test', slug: 'overthinking-test', category: 'Thinking style' as const, theme: 'overthinking' },
-  { title: 'Burnout reflection test', slug: 'burnout-reflection-test', category: 'Stress & burnout' as const, theme: 'burnout patterns' },
-  { title: 'Values clarity test', slug: 'values-clarity-test', category: 'Career & values' as const, theme: 'values clarity' },
-  { title: 'Emotional awareness test', slug: 'emotional-awareness-test', category: 'Emotions' as const, theme: 'emotional awareness' },
-  { title: 'Social battery test', slug: 'social-battery-test', category: 'Social energy' as const, theme: 'social energy' },
-  { title: 'Motivation style test', slug: 'motivation-style-test', category: 'Focus & motivation' as const, theme: 'motivation style' },
-  { title: 'Habit loop test', slug: 'habit-loop-test', category: 'Habits & discipline' as const, theme: 'habit loops' },
-  { title: 'Self-esteem reflection test', slug: 'self-esteem-reflection-test', category: 'Self-esteem' as const, theme: 'self-esteem' },
-  { title: 'Career direction test', slug: 'career-direction-test', category: 'Career & values' as const, theme: 'career direction' },
-  { title: 'Thinking style test', slug: 'thinking-style-test', category: 'Thinking style' as const, theme: 'thinking style' },
-  { title: 'Decision-making style test', slug: 'decision-making-style-test', category: 'Thinking style' as const, theme: 'decision-making style' },
-  { title: 'Conflict style test', slug: 'conflict-style-test', category: 'Relationships' as const, theme: 'conflict style' },
-  { title: 'Love language inspired test', slug: 'love-language-inspired-test', category: 'Relationships' as const, theme: 'connection preferences' },
-  { title: 'Inner critic test', slug: 'inner-critic-test', category: 'Self-esteem' as const, theme: 'inner critic' },
-];
-
-const notOkayDirectly = [
-  'MMPI',
-  'MMPI-2',
-  'MMPI-2-RF',
-  'MMPI-3',
-  'MBTI official assessment',
-  '16PF official questionnaire',
-  'NEO-PI-R',
-  'NEO-PI-3',
-  'BDI / BDI-II Beck Depression Inventory',
-  'BAI Beck Anxiety Inventory',
-  'WAIS',
-  'WISC',
-  'Stanford-Binet official IQ tests',
-  'Rorschach official systems',
-  'TAT official materials',
-  'MCMI / Millon inventories',
-  'PAI Personality Assessment Inventory',
-  'SCL-90-R',
-  'ISI Insomnia Severity Index',
-  'Epworth Sleepiness Scale',
+const notOkayDirectly: Array<[string, TestCategory]> = [
+  ['MMPI', 'Personality'],
+  ['MMPI-2', 'Personality'],
+  ['MMPI-2-RF', 'Personality'],
+  ['MMPI-3', 'Personality'],
+  ['MBTI official assessment', 'Personality'],
+  ['16PF official questionnaire', 'Personality'],
+  ['NEO-PI-R', 'Personality'],
+  ['NEO-PI-3', 'Personality'],
+  ['BDI / BDI-II Beck Depression Inventory', 'Emotions'],
+  ['BAI Beck Anxiety Inventory', 'Emotions'],
+  ['WAIS', 'Thinking style'],
+  ['WISC', 'Thinking style'],
+  ['Stanford-Binet official IQ tests', 'Thinking style'],
+  ['Rorschach official systems', 'Personality'],
+  ['TAT official materials', 'Personality'],
+  ['MCMI / Millon inventories', 'Personality'],
+  ['PAI Personality Assessment Inventory', 'Personality'],
+  ['SCL-90-R', 'Emotions'],
+  ['ISI Insomnia Severity Index', 'Stress & burnout'],
+  ['Epworth Sleepiness Scale', 'Stress & burnout'],
 ];
 
 export const testsData: TestDefinition[] = [
@@ -1501,22 +1420,43 @@ export const testsData: TestDefinition[] = [
       },
     ],
   },
-  ...originalTests.map<TestDefinition>((item, index) => ({
-    id: `orig-${index + 1}`,
-    slug: item.slug,
-    title: item.title,
-    description: `Original reflection-oriented ${item.title} designed for non-clinical self-awareness.`,
-    category: item.category,
-    estimatedMinutes: 8,
-    depth: 'medium' as const,
-    tone: 'reflective' as const,
-    status: 'active' as const,
-    riskLevel: 'low' as const,
-    tags: ['original', 'non-clinical'],
-    sourceUrl: '#original',
-    licenseNote: 'Original in-app authoring; not derived from any external instrument.',
-    scoring: { model: 'sum-with-severity', higherIs: 'better' },
-    questions: createOriginalQuestions(item.slug.replace(/[^a-z0-9]/g, ''), item.theme),
-  })),
-  ...notOkayDirectly.map((name) => makePendingLicensedTest(name)),
+  {
+    id: 'swls',
+    slug: 'satisfaction-with-life-scale',
+    title: 'Satisfaction With Life Scale',
+    description: 'Five statements about how satisfied you are with your life as a whole.',
+    category: 'Emotions',
+    estimatedMinutes: 2,
+    depth: 'quick',
+    tone: 'reflective',
+    status: 'active',
+    riskLevel: 'low',
+    tags: ['open', 'wellbeing', 'swls'],
+    sourceUrl: 'https://eddiener.com/scales/7',
+    licenseNote: 'Free for non-commercial use with credit: Diener, Emmons, Larsen & Griffin (1985), Journal of Personality Assessment, 49(1), 71–75.',
+    scoring: {
+      model: 'sum-with-severity',
+      higherIs: 'better',
+      minScore: 5,
+      maxScore: 35,
+      cutoffBands: [
+        { label: 'Extremely dissatisfied', min: 5, max: 9, description: 'deep dissatisfaction with life as a whole right now' },
+        { label: 'Dissatisfied', min: 10, max: 14, description: 'substantial dissatisfaction with how life is going' },
+        { label: 'Slightly dissatisfied', min: 15, max: 19, description: 'some areas of life are falling short of what you want' },
+        { label: 'Neutral', min: 20, max: 20, description: 'roughly equal satisfaction and dissatisfaction' },
+        { label: 'Slightly satisfied', min: 21, max: 25, description: 'life is mostly going fine, with room to improve' },
+        { label: 'Satisfied', min: 26, max: 30, description: 'you like how your life is going overall' },
+        { label: 'Extremely satisfied', min: 31, max: 35, description: 'you are very content with life as a whole' },
+      ],
+    },
+    questions: [
+      'In most ways my life is close to my ideal.',
+      'The conditions of my life are excellent.',
+      'I am satisfied with my life.',
+      'So far I have gotten the important things I want in life.',
+      'If I could live my life over, I would change almost nothing.',
+    ].map((prompt, index) => ({ id: `swls-q${index + 1}`, prompt, type: 'likert', choices: swlsChoices, required: true })),
+  },
+  ...reflectionTestsData,
+  ...notOkayDirectly.map(makePendingLicensedTest),
 ];

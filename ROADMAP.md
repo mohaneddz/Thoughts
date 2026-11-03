@@ -61,11 +61,11 @@ Status legend: ✅ done · 🚧 in progress · ⬜ not started
 | ✅ D8 | The home hero shows a hardcoded "Latest result: Mostly steady" to every visitor | `sections/home/hero.tsx` |
 | ✅ D9 | `sampleCheckIns`, `sampleResult`, `useCheckIns` and the stub `scoreTest()`/`toResultSummary()` are dead fixtures still shipped | `data/tests.ts`, `hooks/use-check-ins.ts`, `utils/scoring` |
 | ✅ D10 | Collections and Learn reference test names that don't exist ("Overthinking Style Test", "Attachment Reflection Test", "Stress Pattern Test"), and nothing links anywhere | `data/collections.ts`, `data/learn.ts` |
-| 🚧 D11 | All 15 "original" tests are the same 7-question template with the theme string swapped in ("Rate your current confidence in handling attachment style"). Their scores mix directions (more stress factors adds points, and so does more confidence) | `data/tests.ts` `createOriginalQuestions` |
-| 🚧 D12 | Pending licensed placeholders all point `sourceUrl` at ipip.ori.org and are all categorised "Personality" (WAIS, BDI, Epworth…) | `data/tests.ts` |
+| ✅ D11 | All 15 "original" tests are the same 7-question template with the theme string swapped in ("Rate your current confidence in handling attachment style"). Their scores mix directions (more stress factors adds points, and so does more confidence) | `data/tests.ts` `createOriginalQuestions` |
+| ✅ D12 | Pending licensed placeholders all point `sourceUrl` at ipip.ori.org and are all categorised "Personality" (WAIS, BDI, Epworth…) | `data/tests.ts` |
 | ✅ D13 | User-facing descriptions contain internal notes: "(licensed + caution handling)", "metadata ready, full item payload pending authoritative import" | `data/tests.ts` |
 | ✅ D14 | IPIP-NEO-300 `sourceUrl` points at the Korean translation page | `data/tests.ts` |
-| D15 | Crisis resources are US-only, plus findahelpline. Nothing is region-aware | `data/crisis-resources.ts` |
+| 🚧 D15 | Crisis resources are US-only, plus findahelpline. Nothing is region-aware | `data/crisis-resources.ts` |
 
 ---
 
@@ -122,15 +122,17 @@ Every tool on `/reflection-tools` is currently just a title card. Make each one 
 
 ### Still open from Phases 1–3
 - D4: swap the Big Five 50 items for Goldberg's published, balanced-keying 50-item marker set
-- D11: the 15 original tests now score in one direction, but their questions are still one shared template (Phase 5)
-- D12: hidden placeholders still say "Personality" for every instrument
 
 ### Phase 5 — Content
-- ⬜ Rewrite the 15 templated "original" tests into real, distinct item sets with typed outcomes (e.g. attachment → anxiety/avoidance dimensions; conflict style → five TKI-style modes; love language → five categories) (D11)
-- ⬜ Learn article bodies at `/learn/[id]` with related tests
-- ⬜ Add more freely usable instruments: SWLS (Satisfaction With Life), K10 (Kessler), ASRS v1.1 (adult ADHD self-report, WHO), UCLA-3 loneliness, Brief Resilience Scale, Self-Compassion Scale-Short Form. Verify licence terms for each before adding
-- ⬜ Region-aware crisis resources, including Algeria. Verify every number from an official source first (D15)
-- ⬜ Arabic and French locales with RTL support (target audience)
+- ✅ Rewrite the 15 templated "original" tests into real, distinct item sets with typed outcomes — ~190 original items; style tests name the most pronounced style, attachment and social battery resolve to quadrant profiles, the rest get bands plus the area that most needs attention (D11)
+- ✅ Learn article bodies at `/learn/[id]` with related tests and tools (10 articles)
+- 🚧 More freely usable instruments. Licence checked 2026-11-03:
+  - ✅ SWLS — free for non-commercial use with credit; added with its published bands
+  - ⬜ K10, ASRS v1.1 — Harvard NCS pages returned 503 on every attempt; retry
+  - ⬜ SCS-SF, UCLA-3 — no licence statement found on the official pages; ask the authors or skip
+  - ⬜ Brief Resilience Scale — not checked yet
+- 🚧 Region-aware crisis resources (D15) — US, Canada, UK, Ireland and France done from each service's own site; country picker guessed from browser language. **Algeria, Morocco and Tunisia are waiting**: the only sources found were Wikipedia and they conflict (Algeria ambulance 14 vs civil defence 1021), so those countries fall back to "local emergency number + findahelpline" until the numbers are confirmed locally
+- 🚧 Arabic and French locales with RTL — locale switcher, `lang`/`dir` before first paint, Noto Sans Arabic, logical spacing so layouts mirror; nav, footer and home page translated. Still English: every other page's UI copy, tools, results copy, and all questionnaires and articles (clinical screeners need validated official translations — a notice says so in FR/AR)
 
 ### Phase 6 — Quality
 - 🚧 Unit tests for the scoring engine. Every published instrument gets a fixture with a known expected score and band (Vitest set up; PHQ-9, PSS-10, Rosenberg, DASS-21, C-SSRS, MDQ, IPIP-NEO-120, Big Five and check-in helpers covered — GAD, AUDIT, WHO-5, PCL-5 still to add)

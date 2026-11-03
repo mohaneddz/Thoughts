@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { BookmarkCheck, BookmarkPlus, Sparkles } from 'lucide-react';
-import { useAIInterpretation } from '@/hooks/useAIInterpretation';
+import { useAIInterpretation } from '@/hooks/useAiInterpretation';
 import type { AIInterpretationMode } from '@/types/result';
 import { ModeSelector } from '@/components/ai/modeSelector';
 import { AIChatBox } from '@/components/ai/aiChatBox';

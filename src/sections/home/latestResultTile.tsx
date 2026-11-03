@@ -4,10 +4,12 @@ import Link from 'next/link';
 import { routes } from '@/config/routes';
 import { usePersonalData } from '@/hooks/usePersonalData';
 import { formatShortDate } from '@/utils/formatting';
+import { useLocale } from '@/i18n/useLocale';
 
 export function LatestResultTile() {
   const { results, checkIns, isReady } = usePersonalData();
   const latest = results[0];
+  const { t } = useLocale();
 
   if (!isReady) {
     return <div className='h-full min-h-36 animate-pulse rounded-[1.5rem] bg-[var(--color-surface-soft)]' />;
@@ -16,13 +18,13 @@ export function LatestResultTile() {
   if (!latest) {
     return (
       <div className='rounded-[1.5rem] border border-[var(--color-border)] bg-[var(--color-surface)] p-5'>
-        <p className='text-sm text-[var(--color-muted)]'>Your latest result</p>
-        <h2 className='mt-2 font-heading text-3xl text-[var(--color-text-strong)]'>Nothing yet</h2>
+        <p className='text-sm text-[var(--color-muted)]'>{t('home.latestResult')}</p>
+        <h2 className='mt-2 font-heading text-3xl text-[var(--color-text-strong)]'>{t('home.nothingYet')}</h2>
         <p className='mt-2 text-sm leading-6 text-[var(--color-muted)]'>
-          Your first finished test shows up here. The WHO-5 takes about three minutes.
+          {t('home.firstResultHint')}
         </p>
         <Link href={routes.test('who-5-well-being-index')} className='mt-3 inline-block text-sm font-semibold text-[var(--color-primary)] underline'>
-          Start the WHO-5
+          {t('home.startWho5')}
         </Link>
       </div>
     );
@@ -34,7 +36,7 @@ export function LatestResultTile() {
       className='block rounded-[1.5rem] border border-[var(--color-border)] bg-[var(--color-surface)] p-5 transition hover:border-[var(--color-primary)]/50'
     >
       <p className='text-sm text-[var(--color-muted)]'>
-        Your latest result · {formatShortDate(latest.createdAt)}
+        {t('home.latestResult')} · {formatShortDate(latest.createdAt)}
       </p>
       <h2 className='mt-2 font-heading text-3xl leading-tight text-[var(--color-text-strong)]'>{latest.pattern}</h2>
       <p className='mt-2 text-sm leading-6 text-[var(--color-muted)]'>

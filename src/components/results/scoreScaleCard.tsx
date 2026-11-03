@@ -48,13 +48,13 @@ export function ScoreScaleCard({
           <h3 className='text-sm font-semibold uppercase tracking-[0.16em] text-[var(--color-muted)]'>Where your score sits</h3>
           <p className='mt-1 text-sm text-[var(--color-muted)]'>{directionCopy[direction]}</p>
         </div>
-        <p className='shrink-0 text-right'>
+        <p className='shrink-0 text-end'>
           <span className='font-heading text-4xl text-[var(--color-text-strong)]'>{rawScore}</span>
           <span className='text-sm text-[var(--color-muted)]'> / {maxScore}</span>
         </p>
       </div>
 
-      <div className='relative pt-6'>
+      <div className='relative pt-6' dir='ltr'>
         <div
           className='absolute top-0 -translate-x-1/2 text-[var(--color-text-strong)] transition-[left] duration-500'
           style={{ left: `${markerPercent}%` }}
@@ -78,7 +78,7 @@ export function ScoreScaleCard({
                   onMouseEnter={() => setFocusedLabel(item.label)}
                   onFocus={() => setFocusedLabel(item.label)}
                   className={cn(
-                    'h-full border-r border-[var(--color-panel)] transition-opacity last:border-r-0',
+                    'h-full border-e border-[var(--color-panel)] transition-opacity last:border-e-0',
                     focused && item.label !== focused.label && 'opacity-45',
                   )}
                   style={{ width: `${width}%`, backgroundColor: bandColor(index, usableBands.length, direction) }}
@@ -109,7 +109,7 @@ export function ScoreScaleCard({
           <p className='font-semibold text-[var(--color-text-strong)]'>
             {focused.label}
             {focused.max > focused.min ? <span className='font-normal text-[var(--color-muted)]'> · {focused.min}–{focused.max}</span> : null}
-            {focused.label === band?.label ? <span className='ml-2 text-xs font-semibold uppercase tracking-wide text-[var(--color-primary)]'>you</span> : null}
+            {focused.label === band?.label ? <span className='ms-2 text-xs font-semibold uppercase tracking-wide text-[var(--color-primary)]'>you</span> : null}
           </p>
           {focused.description ? <p className='mt-1 text-[var(--color-muted)]'>Scores here suggest {focused.description}.</p> : null}
         </div>

@@ -5,20 +5,22 @@ import { usePathname } from 'next/navigation';
 import { BookOpen, Home, ListChecks, Sparkles, UserRound, type LucideIcon } from 'lucide-react';
 import { siteConfig } from '@/config/site';
 import { cn } from '@/utils/cn';
+import { useLocale } from '@/i18n/useLocale';
 
 const icons: Record<string, LucideIcon> = {
   home: Home,
   tests: ListChecks,
-  'check-in': Sparkles,
+  checkIn: Sparkles,
   learn: BookOpen,
   profile: UserRound,
 };
 
 export function MobileNav() {
   const pathname = usePathname();
+  const { t } = useLocale();
 
   return (
-    <nav className='fixed bottom-0 left-0 right-0 z-40 border-t border-[var(--color-border)] bg-[var(--color-background)] md:hidden'>
+    <nav className='fixed inset-x-0 bottom-0 z-40 border-t border-[var(--color-border)] bg-[var(--color-background)] lg:hidden'>
       <div className='mx-auto grid max-w-xl grid-cols-5'>
         {siteConfig.mobileLinks.map((item) => {
           const Icon = icons[item.icon];
@@ -33,7 +35,7 @@ export function MobileNav() {
               )}
             >
               <Icon size={15} />
-              <span>{item.label}</span>
+              <span>{t(item.labelKey)}</span>
             </Link>
           );
         })}
