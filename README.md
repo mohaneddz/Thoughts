@@ -19,7 +19,8 @@ This is an informational, non-clinical reflection tool. It does not diagnose, tr
   - Substance use: AUDIT, AUDIT-C
   - Trauma & risk: PCL-5 (PTSD Checklist), C-SSRS (Columbia Suicide Severity Rating Scale), MDQ (Mood Disorder Questionnaire)
   - Personality: IPIP Big Five (50 and 100 item), IPIP-NEO (120 and 300 item), IPIP Personality Scales curated pack
-  - A set of lighter, non-clinical reflection quizzes (attachment style, overthinking, burnout, values clarity, emotional awareness, social battery, motivation style, habit loops, self-esteem, career direction, thinking style, decision-making style, conflict style, love language, inner critic)
+  - Well-being: Satisfaction With Life Scale (SWLS)
+  - 15 original, non-clinical reflection tests written for this app (attachment patterns, overthinking, burnout check, values clarity, emotional awareness, social battery, motivation style, habit system, self-worth, career interests, thinking style, decision-making style, conflict style, connection preferences, inner critic) — each with its own items, domains, descriptions and tips
 - **Honest scoring** — every test declares whether a higher score is better, worse or neutral, so a high stress score never reads as good news. Screeners show your score on an interactive band scale; the Big Five, IPIP-NEO-120 (5 domains, 30 facets, published reverse keys) and the IPIP scale pack show a per-trait profile instead of a meaningless grand total. Scoring is covered by Vitest unit tests.
 - **Crisis-aware result handling** — high-risk screeners (C-SSRS, PHQ-9 item 9, PCL-5, MDQ) surface dedicated safety messaging in results rather than a plain score.
 - **Results history** — every finished test is kept at `/results`, retakes are charted over time, and any result can be deleted.
@@ -28,7 +29,9 @@ This is an informational, non-clinical reflection tool. It does not diagnose, tr
 - **Optional AI interpretation** — six interpretation modes plus a follow-up chat (`/api/ai/interpret`, `/api/ai/chat`). Only a zod-validated result summary is sent to Groq (test, score, range, subscales, crisis flag) — never individual answers, names or notes — and only when the user asks.
 - **Check-ins and dashboard** — seven-slider daily check-in with a rule-based read, streaks, 7/30/365-day trend charts (dependency-free SVG) and editable history; the dashboard brings together weekly averages, trends, the latest result per test and recent thoughts.
 - **Saved thoughts** — hand-written notes plus saved takeaways from results, tools and AI, with search, source filters and delete.
-- **Collections & learn library** — guided paths and short articles that link straight to the relevant tests and tools.
+- **Collections & learn library** — guided paths, and ten full articles at `/learn/[id]` that link straight to the relevant tests and tools.
+- **Region-aware crisis lines** — the safety gate, crisis results and privacy page show lines for the visitor's country (US, Canada, UK, Ireland, France), with findahelpline.com elsewhere. Only numbers confirmed on each service's own site are listed.
+- **English, French and Arabic** — language switcher with RTL layout and an Arabic font. The app shell is translated; questionnaires and articles stay in English until validated translations exist.
 - **Light/dark theme** with persisted preference.
 
 ### Not (yet) available
@@ -65,7 +68,7 @@ Commercial, copyrighted clinical instruments (MMPI, WAIS, MBTI, Rorschach, TAT, 
 
 ## Status
 
-Actively developed — see [ROADMAP.md](ROADMAP.md) for the full audit, bug list and phased plan. Scoring correctness, interactive tools, tracking and the AI rework are done; next up is content (rewriting the 15 templated reflection tests, article bodies, more open instruments, region-aware crisis lines) and broader test coverage. The commercial personality/clinical instruments remain gated pending licensing.
+Actively developed — see [ROADMAP.md](ROADMAP.md) for the full audit, bug list and phased plan. Scoring correctness, interactive tools, tracking and the AI rework are done; Phase 5 (content) is mostly done; still open are a few instruments waiting on licence checks, confirmed crisis numbers for Algeria/Morocco/Tunisia, and translating the rest of the UI. Phase 6 (quality) is next. The commercial personality/clinical instruments remain gated pending licensing.
 
 ## Setup
 
