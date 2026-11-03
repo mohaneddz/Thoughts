@@ -1,6 +1,7 @@
 import { TriangleAlert } from 'lucide-react';
 import { Card } from '@/components/ui/card';
-import { crisisResources, crisisCopy } from '@/data/crisisResources';
+import { crisisCopy } from '@/data/crisisResources';
+import { CrisisResourceList } from '@/components/common/crisisResourceList';
 import type { CrisisSignal } from '@/types/result';
 
 export function CrisisResourceCard({ signal }: { signal: CrisisSignal }) {
@@ -22,22 +23,7 @@ export function CrisisResourceCard({ signal }: { signal: CrisisSignal }) {
           <p className='mt-1 text-sm leading-6'>{copy.body}</p>
         </div>
       </div>
-      <ul className='space-y-2 rounded-[1.25rem] border border-current/20 bg-[var(--color-surface)] p-4 text-sm text-[var(--color-text)]'>
-        {crisisResources.map((resource) =>
-          resource.href ? (
-            <li key={resource.label}>
-              <a href={resource.href} className='font-semibold text-[var(--color-primary)] underline'>
-                {resource.label}
-              </a>
-              : {resource.detail}
-            </li>
-          ) : (
-            <li key={resource.label}>
-              <span className='font-semibold text-[var(--color-text-strong)]'>{resource.label}:</span> {resource.detail}
-            </li>
-          ),
-        )}
-      </ul>
+      <CrisisResourceList />
     </Card>
   );
 }

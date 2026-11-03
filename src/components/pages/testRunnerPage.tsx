@@ -17,7 +17,7 @@ import { Progress } from '@/components/ui/progress';
 import { usePersonalData } from '@/hooks/usePersonalData';
 import { routes } from '@/config/routes';
 import { scoreTestForDefinition, toResultSummaryFromBreakdown } from '@/utils/scoring';
-import { crisisResources } from '@/data/crisisResources';
+import { CrisisResourceList, CrisisShortLine } from '@/components/common/crisisResourceList';
 import type { TestDefinition, TestQuestion } from '@/types/test';
 import type { AnswerValue } from '@/types/common';
 
@@ -327,13 +327,7 @@ export function TestRunnerPage({ test }: { test: TestDefinition }) {
                   </p>
                 </div>
               </div>
-              <ul className='space-y-2 rounded-[1.25rem] border border-[var(--color-border)] p-4 text-sm text-[var(--color-muted)]'>
-                {crisisResources.map((resource) => (
-                  <li key={resource.label}>
-                    <span className='font-semibold text-[var(--color-text)]'>{resource.label}:</span> {resource.detail}
-                  </li>
-                ))}
-              </ul>
+              <CrisisResourceList />
               <Button onClick={() => setStarted(true)}>I understand, continue</Button>
             </Card>
           ) : (
@@ -397,7 +391,7 @@ export function TestRunnerPage({ test }: { test: TestDefinition }) {
                 <div className='rounded-[1.2rem] border border-[var(--color-warning-border)] bg-[var(--color-warning-bg)] p-4 text-sm text-[var(--color-warning-text)]'>
                   <p className='inline-flex items-center gap-1 font-semibold'>
                     <TriangleAlert size={14} />
-                    If you are feeling unsafe now, call or text 988 (US & Canada) or your local emergency number.
+                    <CrisisShortLine />
                   </p>
                 </div>
               ) : null}
