@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { SendHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { useAIChat } from '@/hooks/useAIInterpretation';
+import { useAIChat } from '@/hooks/useAiInterpretation';
 import { cn } from '@/utils/cn';
 import type { AIResultContext, ChatMessage } from '@/utils/ai/context';
 
