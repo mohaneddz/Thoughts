@@ -12,6 +12,7 @@ export const routes = {
   tool: (id: string) => `/reflection-tools/${id}`,
   collections: '/collections',
   learn: '/learn',
+  article: (id: string) => `/learn/${id}`,
   savedThoughts: '/saved-thoughts',
   privacy: '/privacy',
   about: '/about',
