@@ -67,6 +67,13 @@ describe('attachment profiles', () => {
   ])('high on %j reads as %s', (high, label) => {
     expect(summarize(test.slug, answerHighOn(test, high)).pattern).toBe(label);
   });
+
+  it('never lists the same domain as both most and least pronounced', () => {
+    const summary = summarize(test.slug, answerHighOn(test, ['anxiety']));
+    expect(summary.strengths).toHaveLength(1);
+    expect(summary.growthAreas).toHaveLength(1);
+    expect(summary.strengths[0]).not.toBe(summary.growthAreas[0]);
+  });
 });
 
 describe('style tests', () => {

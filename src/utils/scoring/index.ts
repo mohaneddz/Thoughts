@@ -204,7 +204,9 @@ const levelWords = { low: 'Lower', middle: 'Moderate', high: 'Higher' } as const
 function describeTopLevelDomains(domains: DomainScore[]) {
   const topLevel = domains.filter((domain) => !domain.parentId);
   const ranked = [...topLevel].sort((a, b) => b.percent - a.percent);
-  return { topLevel, highest: ranked.slice(0, 2), lowest: ranked.slice(-2).reverse() };
+  // Never list a domain as both most and least pronounced.
+  const count = Math.min(2, Math.max(1, Math.floor(topLevel.length / 2)));
+  return { topLevel, highest: ranked.slice(0, count), lowest: ranked.slice(-count).reverse() };
 }
 
 function domainDefinition(test: TestDefinition, id: string) {
